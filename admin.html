@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>海创周 · 后台管理</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root {
+      --admin-bg: #0a0e27;
+      --admin-card: #13183a;
+      --admin-border: #1e2954;
+      --admin-accent: #06b6d4;
+      --admin-danger: #ef4444;
+      --admin-text: #c8d6e5;
+      --admin-muted: #6c7a9a;
+    }
+    body { background: var(--admin-bg); color: var(--admin-text); font-family: -apple-system, 'Segoe UI', sans-serif; margin: 0; padding: 20px; min-height: 100vh; }
+    .admin-container { max-width: 720px; margin: 0 auto; }
+    .admin-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--admin-border); }
+    .admin-header h1 { font-size: 20px; margin: 0; color: #fff; }
+    .admin-header h1 i { color: var(--admin-accent); margin-right: 8px; }
+    .admin-header .back-link { margin-left: auto; color: var(--admin-muted); text-decoration: none; font-size: 13px; }
+    .admin-header .back-link:hover { color: var(--admin-accent); }
+
+    /* 登录页 */
+    .login-box { background: var(--admin-card); border: 1px solid var(--admin-border); border-radius: 12px; padding: 40px 24px; text-align: center; max-width: 320px; margin: 80px auto; }
+    .login-box .lock-icon { font-size: 48px; color: var(--admin-accent); margin-bottom: 16px; }
+    .login-box h2 { color: #fff; font-size: 18px; margin: 0 0 8px; }
+    .login-box p { color: var(--admin-muted); font-size: 13px; margin: 0 0 24px; }
+    .login-box input { width: 100%; padding: 12px 16px; border: 1px solid var(--admin-border); border-radius: 8px; background: var(--admin-bg); color: #fff; font-size: 16px; box-sizing: border-box; outline: none; }
+    .login-box input:focus { border-color: var(--admin-accent); }
+    .login-box .login-btn { margin-top: 16px; width: 100%; padding: 12px; border: none; border-radius: 8px; background: var(--admin-accent); color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; }
+    .login-box .login-btn:hover { opacity: .85; }
+    .login-error { color: var(--admin-danger); font-size: 13px; margin-top: 12px; display: none; }
+
+    /* 管理面板 */
+    .section { margin-bottom: 28px; }
+    .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .section-header h2 { font-size: 16px; margin: 0; color: #fff; }
+    .section-header .count { background: var(--admin-border); color: var(--admin-muted); padding: 2px 10px; border-radius: 10px; font-size: 12px; }
+    .clear-btn { background: var(--admin-border); color: var(--admin-danger); border: none; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; margin-left: auto; }
+    .clear-btn:hover { background: rgba(239,68,68,0.15); }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th { background: var(--admin-card); color: var(--admin-muted); font-weight: 500; text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--admin-border); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; }
+    .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--admin-border); vertical-align: middle; }
+    .data-table tr:hover td { background: rgba(6,182,212,.04); }
+    .data-table .col-id { color: var(--admin-muted); width: 48px; }
+    .data-table .col-name { color: #fff; }
+    .data-table .col-text { color: var(--admin-text); word-break: break-word; }
+    .data-table .col-time { color: var(--admin-muted); font-size: 11px; white-space: nowrap; width: 80px; }
+    .data-table .col-action { width: 44px; text-align: center; }
+
+    .del-btn { background: none; border: 1px solid transparent; color: var(--admin-danger); cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 6px; transition: all .15s; opacity: .5; }
+    .del-btn:hover { opacity: 1; background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.3); }
+
+    .empty-state { text-align: center; padding: 32px; color: var(--admin-muted); font-size: 13px; background: var(--admin-card); border-radius: 8px; }
+
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1d3a; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 20px rgba(0,0,0,.4); display: none; z-index: 999; white-space: nowrap; }
+    .toast.show { display: block; animation: toastIn .3s ease; }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(12px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    @media (max-width: 500px) {
+      body { padding: 12px; }
+      .data-table { font-size: 12px; }
+      .data-table td, .data-table th { padding: 6px 6px; }
+      .data-table .col-id { display: none; }
+      .data-table .col-text { max-width: 90px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="admin-container">
+
+  <!-- 登录 -->
+  <div class="login-box" id="loginBox">
+    <div class="lock-icon"><i class="fas fa-lock"></i></div>
+    <h2>后台管理</h2>
+    <p>请输入管理员密码</p>
+    <input type="password" id="pwdInput" placeholder="输入密码" autocomplete="off">
+    <button class="login-btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> 登录</button>
+    <div class="login-error" id="loginError"><i class="fas fa-exclamation-circle"></i> 密码错误</div>
+  </div>
+
+  <!-- 管理面板（登录后显示） -->
+  <div id="adminPanel" style="display:none">
+
+    <div class="admin-header">
+      <h1><i class="fas fa-shield-alt"></i> 海创周 · 后台管理</h1>
+      <a href="https://haichuangzhou1.pages.dev/" class="back-link" target="_blank"><i class="fas fa-external-link-alt"></i> 前台</a>
+    </div>
+
+    <!-- 签到管理 -->
+    <div class="section">
+      <div class="section-header">
+        <h2><i class="fas fa-clipboard-check" style="color:var(--admin-accent)"></i> 签到</h2>
+        <span class="count" id="ciCount">0</span>
+      </div>
+      <div id="ciList"></div>
+    </div>
+
+    <!-- 留言管理 -->
+    <div class="section">
+      <div class="section-header">
+        <h2><i class="fas fa-comments" style="color:var(--admin-accent)"></i> 留言</h2>
+        <button class="clear-btn" onclick="clearMessages()" title="清空全部留言"><i class="fas fa-eraser"></i> 清空</button>
+        <span class="count" id="msgCount">0</span>
+      </div>
+      <div id="msgList"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API_BASE = 'https://hkgexport.com/api';
+let adminPassword = '';
+
+// Toast 提示
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+// 带密码的 API 请求
+async function adminFetch(path, opts = {}) {
+  const res = await fetch(API_BASE + path, {
+    ...opts,
+    headers: { ...opts.headers, 'X-Admin-Password': adminPassword },
+  });
+  const json = await res.json();
+  if (!json.ok) throw new Error(json.error || '请求失败');
+  return json;
+}
+
+// 加载签到列表
+async function loadCheckins() {
+  try {
+    const json = await adminFetch('/admin/checkins');
+    const data = json.data || [];
+    document.getElementById('ciCount').textContent = data.length;
+    const list = document.getElementById('ciList');
+
+    if (data.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="fa-regular fa-face-smile"></i> 暂无签到</div>';
+      return;
+    }
+
+    let html = '<table class="data-table"><thead><tr><th>#</th><th>姓名</th><th>时间</th><th></th></tr></thead><tbody>';
+    data.forEach(r => {
+      const d = new Date(r.t);
+      const time = d.toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+      html += `<tr>
+        <td class="col-id">${r.id}</td>
+        <td class="col-name">${escapeHtml(r.name)}</td>
+        <td class="col-time">${time}</td>
+        <td class="col-action"><button class="del-btn" onclick="delCheckin(${r.id})" title="删除"><i class="fas fa-trash-alt"></i></button></td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    list.innerHTML = html;
+  } catch (e) {
+    document.getElementById('ciList').innerHTML = `<div class="empty-state" style="color:var(--admin-danger)"><i class="fas fa-exclamation-circle"></i> 加载失败: ${e.message}</div>`;
+  }
+}
+
+// 加载留言列表
+async function loadMessages() {
+  try {
+    const json = await adminFetch('/admin/messages');
+    const data = json.data || [];
+    document.getElementById('msgCount').textContent = data.length;
+    const list = document.getElementById('msgList');
+
+    if (data.length === 0) {
+      list.innerHTML = '<div class="empty-state"><i class="fa-regular fa-face-smile"></i> 暂无留言</div>';
+      return;
+    }
+
+    let html = '<table class="data-table"><thead><tr><th>#</th><th>头像</th><th>昵称</th><th>内容</th><th>时间</th><th></th></tr></thead><tbody>';
+    data.forEach(r => {
+      const d = new Date(r.t);
+      const time = d.toLocaleString('zh-CN', { month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit' });
+      html += `<tr>
+        <td class="col-id">${r.id}</td>
+        <td style="font-size:18px;text-align:center;width:32px">${escapeHtml(r.label || '🙂')}</td>
+        <td class="col-name">${escapeHtml(r.name || '匿名')}</td>
+        <td class="col-text">${escapeHtml(r.text)}</td>
+        <td class="col-time">${time}</td>
+        <td class="col-action"><button class="del-btn" onclick="delMessage(${r.id})" title="删除"><i class="fas fa-trash-alt"></i></button></td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    list.innerHTML = html;
+  } catch (e) {
+    document.getElementById('msgList').innerHTML = `<div class="empty-state" style="color:var(--admin-danger)"><i class="fas fa-exclamation-circle"></i> 加载失败: ${e.message}</div>`;
+  }
+}
+
+// 删除签到
+async function delCheckin(id) {
+  if (!confirm('确定删除这条签到？')) return;
+  try {
+    await adminFetch('/admin/checkin?id=' + id, { method: 'DELETE' });
+    showToast('已删除签到 #' + id);
+    loadCheckins();
+  } catch (e) {
+    showToast('删除失败: ' + e.message);
+  }
+}
+
+// 删除留言
+async function delMessage(id) {
+  if (!confirm('确定删除这条留言？')) return;
+  try {
+    await adminFetch('/admin/message?id=' + id, { method: 'DELETE' });
+    showToast('已删除留言 #' + id);
+    loadMessages();
+  } catch (e) {
+    showToast('删除失败: ' + e.message);
+  }
+}
+
+// 清空全部留言
+async function clearMessages() {
+  if (!confirm('确定清空全部留言？此操作不可撤销！')) return;
+  try {
+    await adminFetch('/admin/messages/all', { method: 'DELETE' });
+    showToast('已清空全部留言');
+    loadMessages();
+  } catch (e) {
+    showToast('清空失败: ' + e.message);
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// 登录
+document.getElementById('loginBtn').onclick = async () => {
+  const pwd = document.getElementById('pwdInput').value.trim();
+  if (!pwd) return;
+  adminPassword = pwd;
+
+  // 验证密码
+  try {
+    const json = await adminFetch('/admin/checkins');
+    if (json.ok) {
+      document.getElementById('loginBox').style.display = 'none';
+      document.getElementById('adminPanel').style.display = 'block';
+      loadCheckins();
+      loadMessages();
+    }
+  } catch (e) {
+    document.getElementById('loginError').style.display = 'block';
+    adminPassword = '';
+  }
+};
+
+// 回车登录
+document.getElementById('pwdInput').onkeydown = (e) => {
+  if (e.key === 'Enter') document.getElementById('loginBtn').click();
+};
+</script>
+</body>
+</html>

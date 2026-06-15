@@ -467,17 +467,6 @@ section { padding: 60px 0; }
 }
 .gb-btn:hover { opacity: .9; transform: translateY(-1px); }
 .gb-btn:disabled { opacity: .5; cursor: not-allowed; }
-.gb-btn-ghost {
-  background: transparent; color: var(--text-light);
-  padding: 9px 14px; font-size: 13px;
-}
-.gb-btn-ghost:hover { background: #f1f5f9; color: #dc2626; transform: none; }
-
-.gb-list { display: flex; flex-direction: column; gap: 10px; }
-.gb-empty {
-  text-align: center; padding: 40px 20px;
-  color: var(--text-light); font-size: 14px;
-}
 .gb-item {
   background: var(--card); border-radius: var(--radius);
   padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06);
@@ -507,6 +496,28 @@ section { padding: 60px 0; }
   margin-left: 4px;
 }
 .gb-item-del:hover { color: #dc2626; background: #f1f5f9; }
+/* ===== 折叠/展开按钮 ===== */
+.toggle-expand {
+  text-align: center;
+  padding: 12px;
+  color: var(--accent2);
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  transition: color .2s;
+  clear: both;
+}
+.toggle-expand:hover { color: var(--accent); }
+.toggle-expand i { font-size: 11px; margin-left: 4px; }
+
+/* 签到和留言列表最小高度，防止展开/收起时页面跳动 */
+#checkinList, #gbList { min-height: 80px; }
+.gb-item, .checkin-person { animation: fadeIn .25s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 footer {
   background: var(--primary); color: rgba(255,255,255,.8); padding: 40px 0 20px;
 }

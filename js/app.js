@@ -217,7 +217,7 @@
   }
 
   /* ----- 8. 签到（Cloudflare Worker API）----- */
-  const API_BASE = 'https://haichuangzhou-api.peaceup.workers.dev';
+  const API_BASE = 'https://hkgexport.com/api';
 
   async function apiCheckin(method, body) {
     const res = await fetch(API_BASE + '/checkin', {
@@ -229,6 +229,8 @@
   }
 
   let checkinList = [];   // 当前内存中的签到列表
+  let checkinExpanded = false;  // 签到是否展开全部
+  const DISPLAY_LIMIT = 5;
 
   async function renderCheckins() {
     const list = document.getElementById('checkinList');
@@ -244,15 +246,42 @@
 
     if (total) total.textContent = checkinList.length;
 
+    list.style.minHeight = list.style.minHeight || '80px';
+
+    const showAll = checkinExpanded || checkinList.length <= DISPLAY_LIMIT;
+    const displayList = showAll ? checkinList : checkinList.slice(0, DISPLAY_LIMIT);
+
     list.innerHTML = checkinList.length === 0
       ? '<div style="text-align:center;padding:24px;color:var(--text-light);font-size:13px;">暂无签到记录</div>'
-      : checkinList.map((c, i) => `
-        <div class="checkin-person">
-          <span class="rank ${i < 3 ? 'top3' : ''}">${i + 1}</span>
+      : displayList.map((c, i) => {
+        const rank = checkinList.length - i;
+        return `<div class="checkin-person">
+          <span class="rank ${rank <= 3 ? 'top3' : ''}">${rank}</span>
           <span class="ci-name">${escapeHtml(c.name)}</span>
           <span class="ci-time">${formatTime(c.time)}</span>
-        </div>
-      `).join('');
+        </div>`;
+      }).join('');
+
+    if (checkinList.length > DISPLAY_LIMIT) {
+      const toggle = document.createElement('div');
+      toggle.className = 'toggle-expand';
+      toggle.innerHTML = `${checkinExpanded ? '收起' : '展开全部 ' + checkinList.length + ' 条'} <i class="fas fa-chevron-${checkinExpanded ? 'up' : 'down'}"></i>`;
+      toggle.onclick = async () => {
+        if (checkinExpanded) {
+          const savedVpTop = toggle.getBoundingClientRect().top;
+          checkinExpanded = false;
+          await renderCheckins();
+          requestAnimationFrame(() => {
+            const nt = list.querySelector('.toggle-expand');
+            if (nt) window.scrollTo({ top: nt.getBoundingClientRect().top + scrollY - savedVpTop, behavior: 'instant' });
+          });
+        } else {
+          checkinExpanded = true;
+          await renderCheckins();
+        }
+      };
+      list.appendChild(toggle);
+    }
   }
 
   function showCheckinDone(name, rank) {
@@ -340,6 +369,8 @@
     return res.json();
   }
 
+  let msgExpanded = false;  // 留言是否展开全部
+
   async function renderMessages() {
     const list = document.getElementById('gbList');
     const empty = document.getElementById('gbEmpty');
@@ -354,9 +385,13 @@
     }
 
     if (empty) empty.style.display = msgs.length === 0 ? 'block' : 'none';
-    list.querySelectorAll('.gb-item').forEach(el => el.remove());
+    list.querySelectorAll('.gb-item, .toggle-expand').forEach(el => el.remove());
+    list.style.minHeight = list.style.minHeight || '80px';
 
-    msgs.forEach(msg => {
+    const showAll = msgExpanded || msgs.length <= DISPLAY_LIMIT;
+    const displayMsgs = showAll ? msgs : msgs.slice(0, DISPLAY_LIMIT);
+
+    displayMsgs.forEach(msg => {
       const div = document.createElement('div');
       div.className = 'gb-item';
       div.innerHTML = `
@@ -369,6 +404,26 @@
       `;
       list.appendChild(div);
     });
+
+    if (msgs.length > DISPLAY_LIMIT) {
+      const toggle = document.createElement('div');
+      toggle.className = 'toggle-expand';
+      toggle.innerHTML = `${msgExpanded ? '收起' : '展开全部 ' + msgs.length + ' 条'} <i class="fas fa-chevron-${msgExpanded ? 'up' : 'down'}"></i>`;
+      toggle.onclick = () => {
+        if (msgExpanded) {
+          const savedVpTop = toggle.getBoundingClientRect().top;
+          msgExpanded = false;
+          renderMessages().then(() => {
+            const nt = list.querySelector('.toggle-expand');
+            if (nt) window.scrollTo({ top: nt.getBoundingClientRect().top + scrollY - savedVpTop, behavior: 'instant' });
+          });
+        } else {
+          msgExpanded = true;
+          renderMessages();
+        }
+      };
+      list.appendChild(toggle);
+    }
   }
 
   // 提交留言
@@ -421,15 +476,6 @@
         e.preventDefault();
         submitBtn.click();
       }
-    });
-  }
-
-  // 清空按钮（本地操作，仅清空当前视图）
-  const clearBtn = document.getElementById('gbClear');
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      msgInput && (msgInput.value = '');
-      if (countSpan) countSpan.textContent = '0';
     });
   }
 
