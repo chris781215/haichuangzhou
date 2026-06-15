@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>第26届海创周 · 海纳英才 智创未来</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================================ -->
+<!-- Nav -->
+<!-- ============================================ -->
+<nav class="navbar">
+  <div class="container">
+    <div class="nav-logo">
+      <svg viewBox="0 0 36 36" fill="none">
+        <path d="M18 3a3 3 0 0 1 3 3v4.5l3.9-2.25a3 3 0 0 1 3 5.2L24 15.75l3.9 2.25a3 3 0 0 1-3 5.2L21 21v4.5a3 3 0 0 1-6 0V21l-3.9 2.25a3 3 0 0 1-3-5.2L12 15.75l-3.9-2.25a3 3 0 0 1 3-5.2L15 10.5V6a3 3 0 0 1 3-3z" fill="#06b6d4"/>
+        <circle cx="18" cy="15" r="4" fill="#fff" opacity=".2"/>
+      </svg>
+      <span>海创周</span>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="菜单">
+      <i class="fas fa-bars"></i>
+    </button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#checkin" class="active">签到</a></li>
+      <li><a href="#about">关于</a></li>
+      <li><a href="#activities">活动</a></li>
+      <li><a href="#speakers">嘉宾</a></li>
+      <li><a href="#guestbook">留言</a></li>
+      <li><a href="#achievement">成就</a></li>
+      <li><a href="#media">报道</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ============================================ -->
+<!-- Hero -->
+<!-- ============================================ -->
+<section class="hero" id="home">
+  <div class="hero-particles" id="particles"></div>
+  <div class="hero-content">
+    <span class="hero-badge"><i class="fas fa-rocket"></i> 第26届 · 2026</span>
+    <h1>
+      海纳英才<br>智创未来
+      <small>第26届海外学子(大连)创业周人才交流洽谈会</small>
+    </h1>
+    <div class="countdown-wrap">
+      <div class="countdown-label">距 离 大 会 开 幕</div>
+      <div class="countdown-board">
+        <div class="cd-block">
+          <span class="cd-num" id="cdDays">00</span>
+          <span class="cd-unit">天</span>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-block">
+          <span class="cd-num" id="cdHours">00</span>
+          <span class="cd-unit">时</span>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-block">
+          <span class="cd-num" id="cdMins">00</span>
+          <span class="cd-unit">分</span>
+        </div>
+        <span class="cd-sep">:</span>
+        <div class="cd-block">
+          <span class="cd-num" id="cdSecs">00</span>
+          <span class="cd-unit">秒</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">9000</span>
+        <span class="lbl">参会规模</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">20+</span>
+        <span class="lbl">覆盖国家地区</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">100</span>
+        <span class="lbl">路演项目</span>
+      </div>
+    </div>
+
+    <a href="#checkin" class="hero-cta">
+      了解更多 <i class="fas fa-arrow-down"></i>
+    </a>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 签到 -->
+<!-- ============================================ -->
+<div class="container" id="checkin">
+<section>
+  <div class="section-title fade-in">
+    <span class="tag"><i class="fas fa-clipboard-check"></i> CHECK-IN</span>
+    <h2>嘉宾签到</h2>
+    <p>海创周 · 留下你的足迹</p>
+    <div class="bar"></div>
+  </div>
+
+  <div class="checkin-card fade-in" id="checkinCard">
+    <div class="checkin-form" id="checkinForm">
+      <div class="checkin-hero">
+        <span class="checkin-icon">📋</span>
+        <h3>签到确认</h3>
+        <p>输入你的姓名完成签到</p>
+      </div>
+      <div class="checkin-input-row">
+        <input type="text" id="checkinName" placeholder="输入姓名签到…" maxlength="20" autocomplete="off">
+        <button id="checkinBtn"><i class="fas fa-check"></i> 签到</button>
+      </div>
+    </div>
+    <div class="checkin-done" id="checkinDone" style="display:none;">
+      <div class="checkin-badge">
+        <span class="cb-icon">✅</span>
+        <span class="cb-text">签到成功</span>
+      </div>
+      <div class="checkin-info">
+        你是第 <strong id="checkinRank">--</strong> 位签到嘉宾
+      </div>
+      <div class="checkin-stamp" id="checkinStamp">还未签到</div>
+      <button class="checkin-reset" id="checkinReset">重新签到</button>
+    </div>
+  </div>
+
+  <div class="checkin-list-header fade-in">
+    <span><i class="fas fa-users"></i> 已签到嘉宾 <strong id="checkinTotal">0</strong> 人</span>
+
+  </div>
+  <div class="checkin-list fade-in" id="checkinList"></div>
+</section>
+</div>
+
+<!-- ============================================ -->
+
+
+<div class="container">
+
+<!-- ============================================ -->
+<!-- About -->
+<!-- ============================================ -->
+<section id="about">
+  <div class="section-title fade-in">
+    <span class="tag"><i class="fas fa-info-circle"></i> ABOUT</span>
+    <h2>关于海创周</h2>
+    <p>始于大连 · 服务全国 · 链接全球</p>
+    <div class="bar"></div>
+  </div>
+
+  <div class="about-card fade-in">
+    <p style="font-size:14px;line-height:1.9;">
+      <strong>中国海外学子(大连)创业周</strong>（简称"海创周"）始创于大连，面向全球，
+      是国内引进海外高层次人才的品牌活动之一。历经25届积淀，
+      已成为享誉海内外的引才引智平台。
+    </p>
+    <p style="font-size:14px;line-height:1.9;margin-top:12px;">
+      第26届海创周以 <strong>"海纳英才、智创未来"</strong> 为主题，
+      紧扣高水平科技自立自强目标，聚焦海外学子创业、未来产业赛道、
+      科技成果转化、科创高地建设四大方向，打造海外高层次人才集聚新高地。
+    </p>
+    <div class="about-stats-grid">
+      <div class="stat-card">
+        <span class="num">60+</span>
+        <span class="lbl">国家和地区参与</span>
+      </div>
+      <div class="stat-card">
+        <span class="num">1.6万+</span>
+        <span class="lbl">签订合同</span>
+      </div>
+      <div class="stat-card">
+        <span class="num">7500+</span>
+        <span class="lbl">创办企业</span>
+      </div>
+      <div class="stat-card">
+        <span class="num">10万+</span>
+        <span class="lbl">带动就业</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:44px;">
+    <span class="tag"><i class="fas fa-calendar-alt"></i> DETAILS</span>
+    <h2>大会信息</h2>
+    <div class="bar"></div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-item fade-in">
+      <div class="icon"><i class="fas fa-calendar-day"></i></div>
+      <div>
+        <h4>时间</h4>
+        <p>2026年7月10日（周五）- 11日（周六）</p>
+      </div>
+    </div>
+    <div class="info-item fade-in">
+      <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+      <div>
+        <h4>地点</h4>
+        <p>大连国际会议中心</p>
+      </div>
+    </div>
+    <div class="info-item fade-in">
+      <div class="icon"><i class="fas fa-users"></i></div>
+      <div>
+        <h4>规模</h4>
+        <p>约9000人参会 · 海内外学子覆盖20+国家和地区</p>
+      </div>
+    </div>
+    <div class="info-item fade-in">
+      <div class="icon"><i class="fas fa-building"></i></div>
+      <div>
+        <h4>主办</h4>
+        <p>大连市人民政府 · 大连高新区管委会承办</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<section class="section-alt" id="activities">
+  <div class="container">
+    <div class="section-title fade-in">
+      <span class="tag"><i class="fas fa-list-tree"></i> PROGRAM</span>
+      <h2>活动体系</h2>
+      <p>"1+2+7" 活动矩阵</p>
+      <div class="bar"></div>
+    </div>
+
+    <!-- 1 -->
+    <div class="act-header fade-in">
+      <div class="act-number">1</div>
+      <div class="act-title">
+        <h3>开幕式暨新领军者圆桌对话</h3>
+        <p>7月10日上午 · 大连国际会议中心</p>
+      </div>
+    </div>
+    <p class="fade-in" style="font-size:14px;margin:-10px 0 20px;color:var(--text-light);">
+      集中发布2025年度海外学子优秀创业项目、英歌石科学城人才团队入驻等成果。
+      圆桌对话以 <strong>"战略科技力量与未来产业"</strong> 为主题，
+      邀请两院院士、外籍院士、企业家代表共话新质生产力与科技人才发展。
+    </p>
+
+    <!-- 2 -->
+    <div class="act-header fade-in">
+      <div class="act-number">2</div>
+      <div class="act-title">
+        <h3>两项常态化活动</h3>
+        <p>2月-7月 持续开展</p>
+      </div>
+    </div>
+    <div class="act-grid">
+      <div class="act-item fade-in">
+        <span class="idx">01</span>
+        <span class="desc"><strong>海创周"大篷车"推介</strong> — "请进来+走出去"，赴日本、新加坡、越南及上海、重庆、西安等城市对接推介</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">02</span>
+        <span class="desc"><strong>"海创工程"项目路演</strong> — 组织100+海内外高科技项目路演，对接投融资机构与科创服务资源</span>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="act-header fade-in">
+      <div class="act-number">7</div>
+      <div class="act-title">
+        <h3>七项主体活动</h3>
+        <p>7月10日-11日 集中举办</p>
+      </div>
+    </div>
+    <div class="act-grid">
+      <div class="act-item fade-in">
+        <span class="idx">①</span>
+        <span class="desc"><strong>英歌石科学城创新发展对接会</strong> — 发布新技术新产品新场景，展示重点实验室成果</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">②</span>
+        <span class="desc"><strong>全国科技型企业孵化器交流会</strong> — 探讨"孵化-赋能-投资"三位一体发展</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">③</span>
+        <span class="desc"><strong>辽宁沿海经济带人才一体发展交流会</strong> — 区域人才协同发展联盟启动</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">④</span>
+        <span class="desc"><strong>大连理工大学国际青年学者交流会</strong> — "新创·新智·新优势"主题交流</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">⑤</span>
+        <span class="desc"><strong>"百园百校万企"产业新赛道对接会</strong> — 人工智能、洁净能源、车联网等前沿领域</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">⑥</span>
+        <span class="desc"><strong>企业出海创新发展交流会</strong> — 海外市场开拓与跨境贸易经验分享</span>
+      </div>
+      <div class="act-item fade-in">
+        <span class="idx">⑦</span>
+        <span class="desc"><strong>夏季人才招聘会·海外学子专场</strong> — 300+用人单位，线上线下超1.5万个岗位</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container">
+
+<!-- ============================================ -->
+<!-- Speakers -->
+<!-- ============================================ -->
+<section id="speakers">
+  <div class="section-title fade-in">
+    <span class="tag"><i class="fas fa-microphone"></i> SPEAKERS</span>
+    <h2>往届演讲嘉宾</h2>
+    <p>历届海创周曾邀请的院士与行业领袖</p>
+    <div class="bar"></div>
+  </div>
+
+  <div class="accordion" id="speakerAccordion">
+    <!-- js 渲染风琴页 -->
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- 留言板 -->
+<!-- ============================================ -->
+<section id="guestbook" style="padding-top:40px;">
+  <div class="section-title fade-in">
+    <span class="tag"><i class="fas fa-comments"></i> GUESTBOOK</span>
+    <h2>嘉宾留言板</h2>
+    <p>写下你想对海创周说的话</p>
+    <div class="bar"></div>
+  </div>
+
+  <div class="gb-form fade-in">
+    <p>📝 写下你想对海创周说的话</p>
+    <div style="display:flex;gap:8px;">
+      <select id="gbLabel" style="flex-shrink:0;width:auto;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc;outline:none;">
+        <option value="🙂">🙂</option>
+        <option value="🎉">🎉</option>
+        <option value="🚀">🚀</option>
+        <option value="💡">💡</option>
+        <option value="❤️">❤️</option>
+      </select>
+      <input type="text" id="gbName" placeholder="你的名字（选填）" maxlength="20" style="flex:1;">
+    </div>
+    <textarea id="gbMsg" placeholder="写下你的留言…" maxlength="500" rows="2"></textarea>
+    <div class="gb-form-actions">
+      <span class="gb-counter"><span id="gbCount">0</span>/500</span>
+      <div>
+        <button id="gbClear" class="gb-btn gb-btn-ghost"><i class="fas fa-trash-alt"></i> 清空</button>
+        <button id="gbSubmit" class="gb-btn"><i class="fas fa-paper-plane"></i> 发布</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="gb-list" id="gbList">
+    <div class="gb-empty" id="gbEmpty">💬 还没有留言，来写第一条吧</div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- Achievements -->
+<!-- ============================================ -->
+<section id="achievement">
+  <div class="section-title fade-in">
+    <span class="tag"><i class="fas fa-trophy"></i> MILESTONES</span>
+    <h2>海创周 · 光辉岁月</h2>
+    <div class="bar"></div>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-item fade-in">
+      <div class="year">2000</div>
+      <div class="desc">🎯 首届中国海外学子(大连)创业周启幕，开创引才先河</div>
+    </div>
+    <div class="tl-item fade-in year-dot">
+      <div class="year">第24届 · 2023</div>
+      <div class="desc">🔄 主题 "海纳英才·创新未来"，1000+海外学子、1000+机构代表参会</div>
+    </div>
+    <div class="tl-item fade-in year-dot">
+      <div class="year">第25届 · 2024</div>
+      <div class="desc">⚡ "科技赋能产业·创新引领未来"，发布20个海创工程优质项目，1350+高层次人才参加</div>
+    </div>
+    <div class="tl-item fade-in year-dot">
+      <div class="year">第26届 · 2026</div>
+      <div class="desc">🚀 "海纳英才·智创未来"，9000人规模，对标大连夏季达沃斯，焕新升级！</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================ -->
+<!-- Media -->
+<!-- ============================================ -->
+<section id="media">
+  <div class="section-title fade-in">
+    <span class="tag"><i class="fas fa-newspaper"></i> MEDIA</span>
+    <h2>媒体报道</h2>
+    <p>海创周相关新闻报道</p>
+    <div class="bar"></div>
+  </div>
+
+  <div class="media-grid" id="mediaGrid">
+    <!-- js 渲染 -->
+  </div>
+</section>
+
+
+<footer>
+  <div class="container">
+    <div class="brand"><i class="fas fa-rocket"></i> 海创周 · 2026</div>
+    <div class="info">
+      <i class="fas fa-calendar-alt"></i> 2026年7月10日-11日<br>
+      <i class="fas fa-map-marker-alt"></i> 大连国际会议中心<br>
+      <i class="fas fa-building"></i> 主办：大连市人民政府<br>
+      <i class="fas fa-cog"></i> 承办：大连高新技术产业园区管理委员会
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>本页面为大会宣传用H5静态展示，内容来源于公开报道与组委会发布信息 · 2026</p>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+</body>
+</html>
