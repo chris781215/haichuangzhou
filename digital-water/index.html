@@ -5,474 +5,679 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>数字水 · 让每一瓶水都成为品牌入口</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
-
-:root {
-  --primary: #0A2540;
-  --accent: #00A3FF;
-  --gold: #C9A96E;
-  --text: #1A1A2E;
-  --gray: #6B7280;
-  --light: #F8FAFC;
-  --radius: 16px;
-}
-* { margin:0; padding:0; box-sizing:border-box; }
+/* --- Reset & Base --- */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior: smooth; }
 body {
-  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", sans-serif;
+  color: #0A1628;
   background: #fff;
   overflow-x: hidden;
-}
-nav {
-  position: fixed; top:0; width:100%; z-index:1000;
-  background: rgba(255,255,255,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0,0,0,0.04);
-}
-.nav-inner {
-  max-width: 1200px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 24px;
-}
-.logo { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-.logo span { color: var(--accent); }
-.nav-links { display: flex; gap: 32px; align-items: center; }
-.nav-links a { text-decoration: none; color: var(--text); font-size: 14px; font-weight: 500; transition: color .2s; }
-.nav-links a:hover { color: var(--accent); }
-.nav-cta {
-  background: var(--accent); color: #fff !important;
-  padding: 10px 24px; border-radius: 100px;
-  font-weight: 600; font-size: 13px;
-  transition: transform .2s, box-shadow .2s !important;
-}
-.nav-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(0,163,255,0.35);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Hero */
+/* --- Design Tokens --- */
+:root {
+  --navy: #0A1628;
+  --navy-light: #132240;
+  --accent: #0066FF;
+  --accent-light: #4D94FF;
+  --gold: #C8A45C;
+  --gold-light: #E8D5A8;
+  --gray-50: #F8F9FC;
+  --gray-100: #EFF1F5;
+  --gray-300: #C5C9D2;
+  --gray-500: #7A8191;
+  --gray-700: #414754;
+  --radius-sm: 8px;
+  --radius: 16px;
+  --radius-lg: 24px;
+}
+
+/* --- Nav --- */
+nav {
+  position: fixed; top:0; width:100%; z-index:1000;
+  background: rgba(255,255,255,0.8);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: transform .3s;
+}
+.nav-inner {
+  max-width: 1200px; margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 24px;
+}
+.logo {
+  font-size:20px; font-weight:700; letter-spacing:-0.5px;
+  display:flex; align-items:center; gap:10px;
+}
+.logo-icon {
+  width:32px; height:32px;
+  background: linear-gradient(135deg, var(--accent), #003399);
+  border-radius: 8px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:16px; font-weight:800;
+}
+.logo span { color: var(--accent); }
+.nav-links { display:flex; gap:32px; align-items:center; }
+.nav-links a {
+  text-decoration:none; color:var(--navy); font-size:14px; font-weight:500;
+  transition:color .2s; position:relative;
+}
+.nav-links a::after {
+  content:''; position:absolute; bottom:-4px; left:0; width:0; height:2px;
+  background:var(--accent); transition:width .3s; border-radius:2px;
+}
+.nav-links a:hover::after { width:100%; }
+.nav-links a:hover { color:var(--accent); }
+.nav-cta {
+  background:var(--accent); color:#fff !important; padding:10px 24px;
+  border-radius:100px; font-weight:600; font-size:13px;
+  transition:transform .3s, box-shadow .3s !important;
+}
+.nav-cta:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,102,255,0.35); }
+.nav-cta::after { display:none !important; }
+
+/* --- Hero --- */
 .hero {
   min-height: 100vh;
   display: flex; align-items: center;
   padding: 120px 24px 80px;
-  background: linear-gradient(135deg, #0A2540 0%, #0D3B66 50%, #0A2540 100%);
-  color: #fff;
+  background: var(--navy);
   position: relative; overflow: hidden;
 }
-.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(0,163,255,0.12) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 50%, rgba(201,169,110,0.08) 0%, transparent 50%);
+/* Animated grid background */
+.hero-bg {
+  position: absolute; inset:0; overflow:hidden;
 }
-.hero-grid {
-  max-width: 1200px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 60px; align-items: center;
-  position: relative; z-index: 1;
+.hero-bg .grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridMove 20s linear infinite;
 }
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(60px); }
+}
+/* Floating orbs */
+.orb {
+  position:absolute; border-radius:50%;
+  filter: blur(80px);
+  animation: orbFloat 8s ease-in-out infinite;
+}
+.orb-1 {
+  width:500px; height:500px;
+  background: radial-gradient(circle, rgba(0,102,255,0.12), transparent);
+  top:-100px; right:-100px;
+  animation-delay: 0s;
+}
+.orb-2 {
+  width:400px; height:400px;
+  background: radial-gradient(circle, rgba(200,164,92,0.08), transparent);
+  bottom:-50px; left:-80px;
+  animation-delay: -3s;
+}
+.orb-3 {
+  width:300px; height:300px;
+  background: radial-gradient(circle, rgba(0,102,255,0.06), transparent);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  animation-delay: -6s;
+}
+@keyframes orbFloat {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-30px) scale(1.05); }
+}
+.orb-3 {
+  animation: orbFloat3 10s ease-in-out infinite;
+}
+@keyframes orbFloat3 {
+  0%,100% { transform: translate(-50%,-50%) scale(1); }
+  50% { transform: translate(-50%,-80px) scale(1.1); }
+}
+
+/* Floating dots */
+.dots {
+  position:absolute; width:100%; height:100%;
+}
+.dot {
+  position:absolute; width:4px; height:4px;
+  background:rgba(255,255,255,0.15); border-radius:50%;
+  animation: dotFloat 6s ease-in-out infinite;
+}
+.dot:nth-child(1) { top:20%; left:15%; animation-delay:0s; }
+.dot:nth-child(2) { top:60%; left:80%; animation-delay:-1.5s; }
+.dot:nth-child(3) { top:30%; left:70%; animation-delay:-3s; }
+.dot:nth-child(4) { top:70%; left:25%; animation-delay:-4.5s; }
+.dot:nth-child(5) { top:15%; left:50%; animation-delay:-2s; }
+@keyframes dotFloat {
+  0%,100% { opacity:0.15; transform:translateY(0); }
+  50% { opacity:0.6; transform:translateY(-20px); }
+}
+
+.hero-inner {
+  max-width: 1200px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap: 80px; align-items:center;
+  position:relative; z-index:2;
+}
+
 .hero-badge {
-  display: inline-block;
-  background: rgba(0,163,255,0.15);
-  border: 1px solid rgba(0,163,255,0.3);
-  padding: 6px 16px; border-radius: 100px;
-  font-size: 12px; font-weight: 500; letter-spacing: 1px;
-  color: var(--accent); margin-bottom: 24px;
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,102,255,0.12);
+  border:1px solid rgba(0,102,255,0.25);
+  padding:4px 14px; border-radius:100px;
+  font-size:11px; font-weight:600; letter-spacing:1px;
+  color: var(--accent); margin-bottom:24px;
+  animation: fadeInUp .6s ease-out;
 }
+.hero-badge .pulse {
+  width:6px; height:6px; border-radius:50%;
+  background:var(--accent); animation:pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50% { opacity:0.5; transform:scale(1.5); }
+}
+
 .hero h1 {
-  font-size: clamp(36px, 5vw, 64px);
-  font-weight: 900; line-height: 1.15;
-  letter-spacing: -1.5px;
-  margin-bottom: 20px;
+  font-size: clamp(36px, 4.5vw, 60px);
+  font-weight:800; line-height:1.12;
+  letter-spacing:-1.5px;
+  margin-bottom:20px;
+  animation: fadeInUp .6s ease-out .1s both;
 }
-.hero h1 em {
-  font-style: normal;
-  background: linear-gradient(135deg, var(--accent), #60CFFF);
+.hero h1 .gradient-text {
+  background: linear-gradient(135deg, var(--accent), #80B5FF);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .hero p {
-  font-size: 18px; line-height: 1.7;
-  color: rgba(255,255,255,0.7);
-  max-width: 480px; margin-bottom: 36px;
-  font-weight: 300;
+  font-size:17px; line-height:1.75;
+  color: rgba(255,255,255,0.6);
+  max-width: 480px; margin-bottom:36px;
+  font-weight:400;
+  animation: fadeInUp .6s ease-out .2s both;
 }
-.hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-actions {
+  display:flex; gap:16px; flex-wrap:wrap;
+  animation: fadeInUp .6s ease-out .3s both;
+}
 .btn-primary {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--accent); color: #fff;
-  padding: 14px 36px; border-radius: 100px;
-  text-decoration: none; font-weight: 600; font-size: 15px;
-  transition: transform .2s, box-shadow .2s;
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--accent); color:#fff;
+  padding:14px 32px; border-radius:100px;
+  text-decoration:none; font-weight:600; font-size:15px;
+  transition:transform .3s, box-shadow .3s;
+  position:relative; overflow:hidden;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,163,255,0.4); }
-.btn-outline {
-  display: inline-flex; align-items: center; gap: 8px;
-  border: 1.5px solid rgba(255,255,255,0.25); color: #fff;
-  padding: 14px 36px; border-radius: 100px;
-  text-decoration: none; font-weight: 500; font-size: 15px;
-  transition: all .2s;
+.btn-primary::before {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(135deg, transparent, rgba(255,255,255,0.15));
+  transform:translateX(-100%); transition:transform .4s;
 }
-.btn-outline:hover { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.05); }
+.btn-primary:hover::before { transform:translateX(0); }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,102,255,0.4); }
 
-/* Water bottle visual */
+.btn-outline {
+  display:inline-flex; align-items:center; gap:8px;
+  border:1.5px solid rgba(255,255,255,0.2); color:#fff;
+  padding:14px 32px; border-radius:100px;
+  text-decoration:none; font-weight:500; font-size:15px;
+  transition:all .3s;
+}
+.btn-outline:hover {
+  border-color:rgba(255,255,255,0.4); background:rgba(255,255,255,0.05);
+  transform:translateY(-2px);
+}
+
+/* --- Hero Visual --- */
 .hero-visual {
-  display: flex; justify-content: center; align-items: center;
-  position: relative;
+  display:flex; justify-content:center; align-items:center;
+  position:relative;
+  animation: fadeInScale .8s ease-out .3s both;
+}
+@keyframes fadeInScale {
+  0% { opacity:0; transform:scale(0.9); }
+  100% { opacity:1; transform:scale(1); }
+}
+
+/* Bottle */
+.bottle-container {
+  position:relative;
+  perspective: 1000px;
 }
 .bottle {
-  width: 200px; height: 400px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: 40px 40px 30px 30px;
+  width: 180px; height: 380px;
+  background: linear-gradient(160deg,
+    rgba(255,255,255,0.10),
+    rgba(255,255,255,0.03) 40%,
+    rgba(255,255,255,0.06) 60%,
+    rgba(255,255,255,0.01)
+  );
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 36px 36px 28px 28px;
   position: relative;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  transform: rotateY(-5deg) rotateX(3deg);
+  transition: transform .6s;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3),
+              inset 0 1px 0 rgba(255,255,255,0.1);
 }
-.bottle::after {
-  content: '';
-  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-  width: 30px; height: 14px;
-  background: rgba(255,255,255,0.15);
+.bottle:hover {
+  transform: rotateY(-3deg) rotateX(1deg);
+}
+.bottle::before {
+  content:''; position:absolute; top:0; left:10%; width:2px; height:30%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
+  border-radius: 2px;
+}
+.bottle-cap {
+  position:absolute; top:-18px; left:50%; transform:translateX(-50%);
+  width:44px; height:22px;
+  background: linear-gradient(135deg, var(--accent), #003399);
   border-radius: 6px 6px 0 0;
+  box-shadow: 0 -4px 12px rgba(0,102,255,0.3);
+}
+.bottle-cap::after {
+  content:''; position:absolute; bottom:-2px; left:0; right:0; height:4px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 0 0 4px 4px;
 }
 .bottle-label {
-  position: absolute; top: 50%; left: 10px; right: 10px;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,0.95);
-  border-radius: 12px; padding: 20px 16px;
-  text-align: center;
+  position:absolute; top:50%; left:12px; right:12px;
+  transform:translateY(-50%);
+  background: rgba(255,255,255,0.97);
+  border-radius: 14px; padding:20px 14px;
+  text-align:center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
-.bottle-label .label-brand {
-  font-size: 14px; font-weight: 700; color: var(--primary);
-  letter-spacing: 2px; margin-bottom: 4px;
+.bottle-label .brand {
+  font-size:13px; font-weight:800; color:var(--navy);
+  letter-spacing:3px; margin-bottom:2px;
 }
-.bottle-label .label-sub {
-  font-size: 9px; color: var(--gray);
-  margin-bottom: 12px; letter-spacing: 1px;
+.bottle-label .sub-brand {
+  font-size:8px; color:var(--gray-500); letter-spacing:2px; margin-bottom:10px;
 }
-.label-qr {
-  width: 70px; height: 70px;
-  background: #fff; border: 2px solid #000;
-  margin: 0 auto 8px;
+.qr-code {
+  width: 68px; height: 68px;
+  margin: 0 auto 8px; position:relative;
+  background: #fff; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  position: relative; border-radius: 8px;
 }
-.label-qr::before {
-  content: '';
-  position: absolute;
-  width: 44px; height: 44px;
-  background:
-    linear-gradient(to right, #000 3px, transparent 3px) 0 0 / 12px 12px,
-    linear-gradient(to bottom, #000 3px, transparent 3px) 0 0 / 12px 12px;
-}
-.label-qr .qr-center {
-  width: 14px; height: 14px;
-  background: #000; border-radius: 2px;
-  position: absolute;
-}
-.label-qr .qr-dot-tl { position: absolute; top: 6px; left: 6px; width: 14px; height: 14px; border: 3px solid #000; border-radius: 3px; }
-.label-qr .qr-dot-tr { position: absolute; top: 6px; right: 6px; width: 14px; height: 14px; border: 3px solid #000; border-radius: 3px; }
-.label-qr .qr-dot-bl { position: absolute; bottom: 6px; left: 6px; width: 14px; height: 14px; border: 3px solid #000; border-radius: 3px; }
+.qr-code svg { width:52px; height:52px; }
 .label-scan {
-  font-size: 10px; color: var(--accent); font-weight: 600;
-  display: flex; align-items: center; justify-content: center; gap: 4px;
+  font-size:9px; color:var(--accent); font-weight:600;
+  display:flex; align-items:center; justify-content:center; gap:4px;
 }
 
-/* Scan line animation */
-.scan-line {
-  position: absolute; left: 50%; transform: translateX(-50%);
-  width: 1.5px; height: 0;
+/* Scan animation on bottle */
+.bottle-scan-line {
+  position:absolute; left:50%; transform:translateX(-50%);
+  width:1px;
   background: linear-gradient(180deg, transparent, var(--accent), transparent);
-  animation: scan 2.5s ease-in-out infinite;
-  top: 80px;
+  animation: bottleScan 2.5s ease-in-out infinite;
+  top:120px; border-radius: 2px;
 }
-@keyframes scan {
-  0% { height: 0; opacity: 0; top: 80px; }
-  10% { opacity: 1; }
-  50% { height: 240px; top: 80px; }
-  90% { opacity: 1; }
-  100% { height: 0; opacity: 0; top: 320px; }
-}
-.scan-dot {
-  position: absolute; width: 6px; height: 6px;
-  background: var(--accent); border-radius: 50%;
-  left: 50%; transform: translateX(-50%);
-  box-shadow: 0 0 20px rgba(0,163,255,0.6);
-  animation: dotMove 2.5s ease-in-out infinite;
-}
-@keyframes dotMove {
-  0% { top: 78px; opacity: 0; }
-  10% { opacity: 1; }
-  50% { top: 318px; }
-  90% { opacity: 1; }
-  100% { top: 320px; opacity: 0; }
+@keyframes bottleScan {
+  0% { height:0; opacity:0; top:120px; }
+  10% { opacity:0.6; }
+  50% { height:140px; top:120px; opacity:1; }
+  90% { opacity:0.6; }
+  100% { height:0; opacity:0; top:260px; }
 }
 
+/* Phone mockup floating */
+.phone-float {
+  position:absolute; right:-50px; bottom:-30px;
+  animation: float 4s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-12px); }
+}
 .phone-mock {
-  position: absolute; right: -40px; bottom: -20px;
-  width: 120px; height: 200px;
-  background: #1a1a2e;
-  border-radius: 20px; border: 2px solid rgba(255,255,255,0.2);
-  overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  width:110px; height:200px;
+  background: #111;
+  border-radius: 18px; border:2px solid rgba(255,255,255,0.15);
+  overflow:hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  position:relative;
 }
-.phone-mock .screen {
-  padding: 8px; background: #f5f5f5; height: 100%;
-  display: flex; flex-direction: column;
+.phone-notch {
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:50px; height:18px; background:#111;
+  border-radius: 0 0 12px 12px; z-index:2;
 }
-.phone-mock .screen .bar {
-  height: 8px; background: var(--accent); border-radius: 4px; margin-bottom: 4px;
-  width: 60%; animation: shimmer 1.5s infinite;
+.phone-screen {
+  padding: 20px 8px 8px; height:100%;
+  display:flex; flex-direction:column; gap:4px;
 }
-.phone-mock .screen .bar:nth-child(2) { width: 80%; }
-.phone-mock .screen .bar:nth-child(3) { width: 40%; height: 40px; border-radius: 6px; background: #ddd; }
-.phone-mock .screen .bar:nth-child(4) { width: 50%; height: 30px; border-radius: 6px; background: var(--accent); opacity: 0.8; margin-top: auto; margin-bottom: 4px; }
-@keyframes shimmer {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+.phone-bar {
+  height:6px; border-radius:4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light));
+  animation: barShimmer 1.5s infinite;
+}
+.phone-bar:nth-child(1) { width:55%; }
+.phone-bar:nth-child(2) { width:75%; height:40px; border-radius:6px; }
+.phone-bar:nth-child(3) { width:45%; }
+.phone-bar:nth-child(4) { width:85%; height:30px; border-radius:6px; background: var(--gold); margin-top:auto; }
+@keyframes barShimmer {
+  0%,100% { opacity:1; }
+  50% { opacity:0.6; }
 }
 
-/* Sections common */
-.section {
-  padding: 100px 24px;
-  max-width: 1200px; margin: 0 auto;
-}
+/* --- Section Common --- */
+.section { padding:120px 24px; }
+.section-inner { max-width:1200px; margin:0 auto; }
+
 .section-label {
-  display: inline-block;
-  font-size: 12px; font-weight: 600; letter-spacing: 2px;
-  color: var(--accent); text-transform: uppercase;
-  margin-bottom: 12px;
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:11px; font-weight:600; letter-spacing:2px;
+  color:var(--accent); text-transform:uppercase;
+  margin-bottom:12px;
+}
+.section-label::before {
+  content:''; width:20px; height:1.5px;
+  background:var(--accent); border-radius:2px;
 }
 .section-title {
-  font-size: clamp(28px, 3.5vw, 44px);
-  font-weight: 700; line-height: 1.25;
-  margin-bottom: 16px;
-  letter-spacing: -0.5px;
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight:700; line-height:1.25;
+  margin-bottom:14px; letter-spacing:-0.5px;
 }
 .section-sub {
-  font-size: 16px; color: var(--gray);
-  line-height: 1.7; max-width: 600px;
+  font-size:16px; color:var(--gray-500);
+  line-height:1.7; max-width:580px;
 }
 
-/* Problem/Solution split */
-.contrast-section {
-  background: var(--light);
-}
-.contrast-inner {
-  max-width: 1200px; margin: 0 auto;
-  padding: 100px 24px;
-}
+/* --- Contrast Section --- */
+.contrast-section { background: var(--gray-50); }
 .contrast-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 40px; margin-top: 48px;
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:32px; margin-top:48px;
 }
 .contrast-card {
-  padding: 40px; border-radius: var(--radius);
-  position: relative;
+  padding:36px; border-radius:var(--radius-lg);
+  position:relative; overflow:hidden;
+  transition: transform .4s, box-shadow .4s;
 }
 .contrast-old {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background:#fff;
+  border:1px solid var(--gray-100);
 }
-.contrast-old .contrast-icon {
-  font-size: 36px; margin-bottom: 16px;
-}
-.contrast-old h3 {
-  font-size: 20px; font-weight: 700; color: #9CA3AF;
-  margin-bottom: 12px;
-}
-.contrast-old p { color: var(--gray); line-height: 1.7; font-size: 14px; }
-.contrast-old .price-tag {
-  display: inline-block;
-  background: #FEE2E2; color: #EF4444;
-  padding: 4px 12px; border-radius: 100px;
-  font-weight: 700; font-size: 20px; margin-top: 16px;
-}
+.contrast-old:hover { transform:translateY(-4px); box-shadow:0 12px 40px rgba(0,0,0,0.06); }
 .contrast-new {
-  background: linear-gradient(135deg, var(--primary), #0D3B66);
-  color: #fff;
+  background: linear-gradient(135deg, var(--navy), #1a3555);
+  color:#fff;
+  box-shadow: 0 8px 32px rgba(0,102,255,0.15);
 }
-.contrast-new .contrast-icon { font-size: 36px; margin-bottom: 16px; }
-.contrast-new h3 {
-  font-size: 20px; font-weight: 700;
-  margin-bottom: 12px;
+.contrast-new:hover { transform:translateY(-4px); box-shadow:0 12px 48px rgba(0,102,255,0.25); }
+.contrast-card .icon-xl { font-size:40px; margin-bottom:16px; }
+.contrast-card h3 { font-size:20px; font-weight:700; margin-bottom:10px; }
+.contrast-card .desc { font-size:14px; line-height:1.7; opacity:0.8; }
+.contrast-old .desc { color:var(--gray-700); }
+.contrast-new .desc { color:rgba(255,255,255,0.7); }
+.price-row {
+  display:flex; align-items:center; gap:12px; margin-top:16px;
 }
-.contrast-new p { color: rgba(255,255,255,0.7); line-height: 1.7; font-size: 14px; }
-.contrast-new .price-tag {
-  display: inline-block;
-  background: rgba(0,163,255,0.2); color: var(--accent);
-  padding: 4px 12px; border-radius: 100px;
-  font-weight: 700; font-size: 20px; margin-top: 16px;
+.price-tag {
+  padding:4px 14px; border-radius:100px;
+  font-weight:700; font-size:22px;
 }
-.contrast-features {
-  margin-top: 20px;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.contrast-features .feat {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 14px; color: rgba(255,255,255,0.8);
-}
-.contrast-features .feat .check { color: #10B981; font-weight: 700; }
-.contrast-features .feat .cross { color: #EF4444; font-weight: 700; }
+.contrast-old .price-tag { background:#FEE2E2; color:#EF4444; }
+.contrast-new .price-tag { background:rgba(0,102,255,0.2); color:var(--accent-light); }
+.price-row .per { font-size:13px; color:var(--gray-500); }
+.contrast-new .price-row .per { color:rgba(255,255,255,0.5); }
 
-/* Scenarios */
-.scenarios {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 24px; margin-top: 48px;
+.feat-list { margin-top:20px; display:flex; flex-direction:column; gap:10px; }
+.feat-item {
+  display:flex; align-items:center; gap:10px;
+  font-size:14px;
+}
+.feat-old { color:var(--gray-500); }
+.feat-new { color:rgba(255,255,255,0.85); }
+.feat-icon { font-weight:700; font-size:16px; width:20px; text-align:center; }
+.feat-icon.ok { color:#10B981; }
+.feat-icon.no { color:#EF4444; }
+
+/* --- Scenarios --- */
+.scenarios-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:20px; margin-top:48px;
 }
 .scenario-card {
-  border-radius: var(--radius);
-  padding: 32px; cursor: pointer;
-  transition: transform .3s, box-shadow .3s;
-  background: var(--light);
-  border: 1px solid transparent;
+  border-radius:var(--radius);
+  padding:32px; cursor:default;
+  background:var(--gray-50);
+  border:1px solid transparent;
+  transition: all .4s cubic-bezier(0.34,1.56,0.64,1);
+  position:relative; overflow:hidden;
+}
+.scenario-card::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, var(--accent), transparent);
+  opacity:0; transition:opacity .4s;
 }
 .scenario-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
-  border-color: var(--accent);
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 20px 60px rgba(0,0,0,0.08);
+  border-color:var(--accent);
 }
-.scenario-card .icon {
-  font-size: 40px; margin-bottom: 16px;
-}
-.scenario-card h4 {
-  font-size: 18px; font-weight: 700; margin-bottom: 8px;
-}
-.scenario-card p {
-  font-size: 14px; color: var(--gray);
-  line-height: 1.6;
-}
-.scenario-card .tag {
-  display: inline-block;
-  margin-top: 12px;
-  padding: 4px 12px; border-radius: 100px;
-  background: rgba(0,163,255,0.1);
-  color: var(--accent); font-size: 12px; font-weight: 600;
+.scenario-card:hover::before { opacity:0.04; }
+.scenario-card .icon { font-size:42px; margin-bottom:16px; position:relative; }
+.scenario-card h4 { font-size:18px; font-weight:700; margin-bottom:8px; position:relative; }
+.scenario-card p { font-size:14px; color:var(--gray-500); line-height:1.65; position:relative; }
+.scenario-tag {
+  display:inline-block; margin-top:14px;
+  padding:3px 12px; border-radius:100px;
+  background:rgba(0,102,255,0.08);
+  color:var(--accent); font-size:11px; font-weight:600;
+  position:relative;
 }
 
-/* How it works */
-.steps {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 32px; margin-top: 48px;
+/* --- How It Works --- */
+.works-section {
+  background: var(--navy); color:#fff;
+  position:relative; overflow:hidden;
+}
+.works-section .section-label { color: var(--accent-light); }
+.works-section .section-label::before { background: var(--accent-light); }
+.works-section .section-sub { color:rgba(255,255,255,0.5); }
+.steps-grid {
+  display:grid; grid-template-columns: repeat(3, 1fr);
+  gap:32px; margin-top:56px;
 }
 .step {
-  text-align: center; position: relative;
+  text-align:center; position:relative;
+  padding:40px 24px;
+  background: rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:var(--radius);
+  transition: transform .4s, box-shadow .4s;
 }
-.step:not(:last-child)::after {
-  content: '→';
-  position: absolute; right: -24px; top: 40px;
-  font-size: 24px; color: var(--accent);
-  font-weight: 300;
+.step:hover {
+  transform:translateY(-4px);
+  box-shadow:0 12px 40px rgba(0,0,0,0.3);
+  border-color:rgba(0,102,255,0.2);
 }
 .step-num {
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  background: var(--accent); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 18px;
-  margin: 0 auto 16px;
+  width:52px; height:52px; margin:0 auto 20px;
+  border-radius:50%;
+  background: linear-gradient(135deg, var(--accent), #003399);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:700; font-size:20px;
+  position:relative;
 }
-.step h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-.step p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+.step-num::after {
+  content:''; position:absolute; inset:-4px;
+  border-radius:50%;
+  border:1px solid rgba(0,102,255,0.3);
+  animation: stepPulse 2s ease-in-out infinite;
+}
+@keyframes stepPulse {
+  0%,100% { transform:scale(1); opacity:0.3; }
+  50% { transform:scale(1.1); opacity:0; }
+}
+.step h4 { font-size:18px; font-weight:700; margin-bottom:10px; }
+.step p { font-size:14px; color:rgba(255,255,255,0.55); line-height:1.65; }
 
-/* Cases */
+/* Arrow between steps */
+.step-arrow {
+  position:absolute; top:80px; right:-24px;
+  font-size:20px; color:var(--accent);
+  opacity:0.5;
+}
+@media (max-width:768px) {
+  .step-arrow { display:none; }
+}
+
+/* --- Cases --- */
 .cases-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 24px; margin-top: 48px;
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));
+  gap:24px; margin-top:48px;
 }
 .case-card {
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid #e5e7eb;
-  transition: transform .3s, box-shadow .3s;
+  border-radius:var(--radius-lg);
+  overflow:hidden; background:#fff;
+  border:1px solid var(--gray-100);
+  transition: transform .4s, box-shadow .4s;
 }
 .case-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+  transform:translateY(-6px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.08);
 }
-.case-mock {
-  height: 180px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 48px;
+.case-visual {
+  height:200px; display:flex; align-items:center; justify-content:center;
+  font-size:56px; position:relative; overflow:hidden;
 }
-.case-mock.conference { background: linear-gradient(135deg, #1a1a2e, #16213e); }
-.case-mock.car { background: linear-gradient(135deg, #0D3B66, #00A3FF); }
-.case-mock.retail { background: linear-gradient(135deg, #C9A96E, #F5E6CC); }
-.case-body { padding: 24px; }
-.case-body .case-client {
-  font-size: 12px; color: var(--accent); font-weight: 600;
-  letter-spacing: 1px; margin-bottom: 8px;
+.case-visual.conf { background: linear-gradient(135deg, #0A1628, #1a3355); }
+.case-visual.sport { background: linear-gradient(135deg, #132240, #0066FF); }
+.case-visual::after {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(circle at 30% 40%, rgba(255,255,255,0.05) 0%, transparent 60%),
+    radial-gradient(circle at 70% 60%, rgba(0,102,255,0.08) 0%, transparent 50%);
 }
-.case-body h4 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-.case-body p { font-size: 14px; color: var(--gray); line-height: 1.6; }
+.case-visual .vis-icon { position:relative; z-index:1; }
+.case-body { padding:28px; }
+.case-client {
+  font-size:11px; color:var(--accent); font-weight:600;
+  letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;
+}
+.case-body h4 { font-size:18px; font-weight:700; margin-bottom:8px; }
+.case-body p { font-size:14px; color:var(--gray-500); line-height:1.65; }
 .case-metrics {
-  display: flex; gap: 24px; margin-top: 16px;
-  padding-top: 16px; border-top: 1px solid #e5e7eb;
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:16px; margin-top:18px; padding-top:18px;
+  border-top:1px solid var(--gray-100);
 }
-.case-metrics .metric { text-align: center; }
-.case-metrics .metric .num {
-  font-size: 20px; font-weight: 700; color: var(--accent);
+.case-metric { text-align:center; }
+.case-metric .num {
+  font-size:22px; font-weight:800;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-.case-metrics .metric .label {
-  font-size: 11px; color: var(--gray);
-}
+.case-metric .label { font-size:11px; color:var(--gray-500); margin-top:2px; }
 
-/* CTA */
+/* --- CTA --- */
 .cta-section {
-  background: linear-gradient(135deg, var(--primary), #0D3B66);
-  color: #fff; text-align: center;
-  padding: 100px 24px;
+  background: var(--navy); color:#fff;
+  text-align:center; padding:120px 24px;
+  position:relative; overflow:hidden;
+}
+.cta-section::before {
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 30% 50%, rgba(0,102,255,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 50%, rgba(200,164,92,0.06) 0%, transparent 60%);
 }
 .cta-inner {
-  max-width: 600px; margin: 0 auto;
+  max-width:600px; margin:0 auto; position:relative; z-index:1;
 }
+.cta-section .section-label { color:rgba(255,255,255,0.4); }
+.cta-section .section-label::before { background:rgba(255,255,255,0.3); }
 .cta-section h2 {
-  font-size: clamp(28px, 3.5vw, 40px);
-  font-weight: 700; margin-bottom: 16px;
+  font-size: clamp(28px, 3.2vw, 38px);
+  font-weight:700; margin-bottom:16px;
 }
 .cta-section p {
-  color: rgba(255,255,255,0.7);
-  font-size: 16px; line-height: 1.7;
-  margin-bottom: 36px;
+  color:rgba(255,255,255,0.5);
+  font-size:16px; line-height:1.7;
+  margin-bottom:36px;
 }
-.cta-actions {
-  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
-}
+.cta-actions { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
 .btn-gold {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--gold); color: var(--primary);
-  padding: 14px 36px; border-radius: 100px;
-  text-decoration: none; font-weight: 700; font-size: 15px;
-  transition: transform .2s, box-shadow .2s;
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--gold); color:var(--navy);
+  padding:14px 32px; border-radius:100px;
+  text-decoration:none; font-weight:700; font-size:15px;
+  transition:transform .3s, box-shadow .3s;
 }
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,169,110,0.4); }
+.btn-gold:hover { transform:translateY(-2px); box-shadow:0 12px 40px rgba(200,164,92,0.3); }
 
-/* Footer */
+/* --- Footer --- */
 footer {
-  background: var(--primary);
-  color: rgba(255,255,255,0.5);
-  text-align: center;
-  padding: 32px 24px;
-  font-size: 13px;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  background: #060E1A; color:rgba(255,255,255,0.35);
+  text-align:center; padding:32px 24px;
+  font-size:13px; border-top:1px solid rgba(255,255,255,0.04);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
-  .hero p { margin-left: auto; margin-right: auto; }
-  .hero-actions { justify-content: center; }
-  .bottle { margin: 0 auto; }
-  .phone-mock { right: 20px; }
-  .contrast-grid { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; }
-  .step:not(:last-child)::after { display: none; }
-  .nav-links a:not(.nav-cta) { display: none; }
-  .scenarios { grid-template-columns: 1fr; }
-  .cases-grid { grid-template-columns: 1fr; }
+/* --- Animations --- */
+@keyframes fadeInUp {
+  0% { opacity:0; transform:translateY(24px); }
+  100% { opacity:1; transform:translateY(0); }
+}
+
+/* Scroll-trigger anim classes */
+.reveal {
+  opacity:0; transform:translateY(30px);
+  transition: opacity .8s cubic-bezier(0.34,1.56,0.64,1),
+              transform .8s cubic-bezier(0.34,1.56,0.64,1);
+}
+.reveal.visible {
+  opacity:1; transform:translateY(0);
+}
+.reveal-delay-1 { transition-delay:0s; }
+.reveal-delay-2 { transition-delay:.1s; }
+.reveal-delay-3 { transition-delay:.2s; }
+.reveal-delay-4 { transition-delay:.3s; }
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns:1fr; gap:48px; text-align:center; }
+  .hero p { margin:0 auto 36px; }
+  .hero-actions { justify-content:center; }
+  .hero-badge { justify-content:center; }
+  .contrast-grid { grid-template-columns:1fr; }
+  .steps-grid { grid-template-columns:1fr; gap:20px; }
+  .steps-grid .step { padding:32px 20px; }
+  .nav-links a:not(.nav-cta) { display:none; }
+  .scenarios-grid { grid-template-columns:1fr; }
+  .cases-grid { grid-template-columns:1fr; }
+  .phone-float { display:none; }
+}
+
+/* --- Smooth scroll indicator --- */
+.scroll-indicator {
+  position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  color:rgba(255,255,255,0.3); font-size:11px; letter-spacing:1px;
+  animation: fadeInUp .6s ease-out .8s both;
+  z-index:2;
+}
+.scroll-line {
+  width:1px; height:40px;
+  background: linear-gradient(180deg, var(--accent), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { opacity:0.3; transform:scaleY(1); }
+  50% { opacity:1; transform:scaleY(1.2); }
 }
 </style>
 </head>
@@ -481,85 +686,146 @@ footer {
 <!-- Nav -->
 <nav>
   <div class="nav-inner">
-    <div class="logo">数字<span>水</span></div>
+    <div class="logo">
+      <div class="logo-icon">W</div>
+      数字<span>水</span>
+    </div>
     <div class="nav-links">
-      <a href="#problem">为什么不一样</a>
+      <a href="#why">为什么不一样</a>
       <a href="#scenarios">适用场景</a>
+      <a href="#works">如何合作</a>
       <a href="#cases">案例</a>
-      <a href="#contact" class="nav-cta">定制方案 →</a>
+      <a href="#contact" class="nav-cta">立即咨询 →</a>
     </div>
   </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-  <div class="hero-grid">
+  <div class="hero-bg">
+    <div class="grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+  </div>
+  <div class="hero-inner">
     <div>
-      <div class="hero-badge">BRAND EXTENSION · DIGITAL EXPERIENCE</div>
-      <h1>把品牌装进<em>瓶装水</em><br>让每一瓶都成为<em>增长入口</em></h1>
-      <p>不是 2 元的贴标水。每一瓶数字水都是一个可交互的品牌触点——扫码直达专属体验，让客户从"喝掉"变成"互动"。</p>
+      <div class="hero-badge">
+        <span class="pulse"></span>
+        BRAND EXTENSION · DIGITAL EXPERIENCE
+      </div>
+      <h1>
+        把品牌装进<span class="gradient-text">瓶装水</span><br>
+        让每一瓶都成为<span class="gradient-text">增长入口</span>
+      </h1>
+      <p>
+        不是 2 元的贴标水。每一瓶数字水都是一个可交互的品牌触点——扫码直达专属体验，让客户从"喝掉"变成"互动"。
+      </p>
       <div class="hero-actions">
         <a href="#contact" class="btn-primary">了解更多 →</a>
-        <a href="#problem" class="btn-outline">为什么不一样</a>
+        <a href="#why" class="btn-outline">为什么不一样</a>
       </div>
     </div>
     <div class="hero-visual">
-      <div class="bottle">
-        <div class="bottle-label">
-          <div class="label-brand">DIGITAL</div>
-          <div class="label-sub">WATER</div>
-          <div class="label-qr">
-            <div class="qr-dot-tl"></div>
-            <div class="qr-dot-tr"></div>
-            <div class="qr-dot-bl"></div>
-            <div class="qr-center"></div>
+      <div class="bottle-container">
+        <div class="bottle">
+          <div class="bottle-cap"></div>
+          <div class="bottle-label">
+            <div class="brand">DIGITAL</div>
+            <div class="sub-brand">WATER</div>
+            <div class="qr-code">
+              <svg viewBox="0 0 52 52" fill="none">
+                <rect x="2" y="2" width="18" height="18" rx="2" fill="#000"/>
+                <rect x="5" y="5" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="13" y="5" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="5" y="13" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="22" y="2" width="18" height="18" rx="2" fill="#000"/>
+                <rect x="25" y="5" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="33" y="5" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="25" y="13" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="2" y="22" width="18" height="18" rx="2" fill="#000"/>
+                <rect x="5" y="25" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="13" y="25" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="5" y="33" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="13" y="33" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="30" y="30" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="38" y="30" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="22" y="38" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="30" y="38" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="22" y="22" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="30" y="22" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="38" y="22" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="22" y="30" width="5" height="5" rx="1" fill="#fff"/>
+                <rect x="38" y="38" width="5" height="5" rx="1" fill="#000"/>
+                <rect x="38" y="22" width="5" height="5" rx="1" fill="#000"/>
+              </svg>
+            </div>
+            <div class="label-scan">📱 扫码体验</div>
           </div>
-          <div class="label-scan">📱 扫码体验</div>
+          <div class="bottle-scan-line"></div>
         </div>
-        <div class="scan-line"></div>
-        <div class="scan-dot"></div>
-      </div>
-      <div class="phone-mock">
-        <div class="screen">
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
-          <div class="bar"></div>
+        <div class="phone-float">
+          <div class="phone-mock">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="phone-bar"></div>
+              <div class="phone-bar"></div>
+              <div class="phone-bar"></div>
+              <div class="phone-bar"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="scroll-indicator">
+    <span>向下探索</span>
+    <div class="scroll-line"></div>
+  </div>
 </section>
 
-<!-- Problem vs Solution -->
-<section class="contrast-section" id="problem">
-  <div class="contrast-inner">
-    <div class="section-label" style="color:var(--accent)">WHY DIGITAL WATER</div>
+<!-- Contrast -->
+<section class="contrast-section section" id="why">
+  <div class="section-inner">
+    <div class="section-label">WHY DIGITAL WATER</div>
     <h2 class="section-title">贴标水 vs 数字水<br>不是同一个物种</h2>
     <p class="section-sub">你的客户见过太多 2 元一瓶的贴标水。数字水不是更贵的贴标水——它是全新的营销介质。</p>
     <div class="contrast-grid">
-      <div class="contrast-card contrast-old">
-        <div class="contrast-icon">💧</div>
+      <div class="contrast-card contrast-old reveal">
+        <div class="icon-xl">💧</div>
         <h3>传统贴标水</h3>
-        <p>Logo 印上去，客户喝完就扔。品牌曝光止于瓶身，没有任何互动和数据回流。</p>
-        <div class="price-tag">≈ 2 元 / 瓶</div>
-        <div class="contrast-features">
-          <div class="feat"><span class="cross">✕</span> 只有 Logo 露出</div>
-          <div class="feat"><span class="cross">✕</span> 无客户互动</div>
-          <div class="feat"><span class="cross">✕</span> 无法追踪效果</div>
-          <div class="feat"><span class="cross">✕</span> 喝完即弃</div>
+        <p class="desc">Logo 印上去，客户喝完就扔。品牌曝光止于瓶身，没有任何互动和数据回流。</p>
+        <div class="price-row">
+          <div class="price-tag">≈ 2 元</div>
+          <span class="per">/ 瓶</span>
+        </div>
+        <div class="feat-list">
+          <div class="feat-item feat-old"><span class="feat-icon no">✕</span> 只有 Logo 露出</div>
+          <div class="feat-item feat-old"><span class="feat-icon no">✕</span> 无客户互动</div>
+          <div class="feat-item feat-old"><span class="feat-icon no">✕</span> 无法追踪效果</div>
+          <div class="feat-item feat-old"><span class="feat-icon no">✕</span> 喝完即弃</div>
         </div>
       </div>
-      <div class="contrast-card contrast-new">
-        <div class="contrast-icon">🔷</div>
+      <div class="contrast-card contrast-new reveal reveal-delay-2">
+        <div class="icon-xl">🔷</div>
         <h3>数字水</h3>
-        <p>瓶身是入口，扫码是起点。专属 H5 页面承载品牌全部故事与交互，后链路可追踪、可运营。</p>
-        <div class="price-tag">≈ 3-4 元 / 瓶</div>
-        <div class="contrast-features">
-          <div class="feat"><span class="check">✓</span> 扫码进入品牌数字空间</div>
-          <div class="feat"><span class="check">✓</span> 查看车型 / 新品 / 活动信息</div>
-          <div class="feat"><span class="check">✓</span> 签到 / 留言 / 预约试驾</div>
-          <div class="feat"><span class="check">✓</span> 数据回收 + 二次触达</div>
+        <p class="desc">瓶身是入口，扫码是起点。专属 H5 页面承载品牌全部故事与交互，后链路可追踪、可运营。</p>
+        <div class="price-row">
+          <div class="price-tag">≈ 3-4 元</div>
+          <span class="per">/ 瓶</span>
+        </div>
+        <div class="feat-list">
+          <div class="feat-item feat-new"><span class="feat-icon ok">✓</span> 扫码进入品牌数字空间</div>
+          <div class="feat-item feat-new"><span class="feat-icon ok">✓</span> 查看车型 / 新品 / 活动信息</div>
+          <div class="feat-item feat-new"><span class="feat-icon ok">✓</span> 签到 / 留言 / 预约试驾</div>
+          <div class="feat-item feat-new"><span class="feat-icon ok">✓</span> 数据回收 + 二次触达</div>
         </div>
       </div>
     </div>
@@ -568,55 +834,57 @@ footer {
 
 <!-- Scenarios -->
 <section class="section" id="scenarios">
-  <div class="section-label">USE CASES</div>
-  <h2 class="section-title">一个场景一个专属体验</h2>
-  <p class="section-sub">数字水覆盖多种 B2C 触点，为每个场景定制交互内容，让客户停留更久、转化更高。</p>
-  <div class="scenarios">
-    <div class="scenario-card">
-      <div class="icon">🚗</div>
-      <h4>4S 店 · 看车体验</h4>
-      <p>客户等候时扫码，360° 看车、对比配置、预约试驾。把排队时间变成选车时间。</p>
-      <div class="tag">提升到店试驾率</div>
-    </div>
-    <div class="scenario-card">
-      <div class="icon">💎</div>
-      <h4>珠宝店 · 新品鉴赏</h4>
-      <p>扫码浏览当季新品、明星同款、限时优惠。线上浏览 → 到店试戴 → 成交闭环。</p>
-      <div class="tag">延长品牌接触时间</div>
-    </div>
-    <div class="scenario-card">
-      <div class="icon">🎤</div>
-      <h4>会议展会 · 数字化参会</h4>
-      <p>扫码签到、查看议程嘉宾、资料下载、互动留言。水就是你的电子参会证。</p>
-      <div class="tag">提升参会体验</div>
-    </div>
-    <div class="scenario-card">
-      <div class="icon">🏨</div>
-      <h4>酒店 · 服务延伸</h4>
-      <p>客房扫码了解酒店服务、周边推荐、餐饮预订。一瓶水引导一次完整入住体验。</p>
-      <div class="tag">提升客单价</div>
+  <div class="section-inner">
+    <div class="section-label">USE CASES</div>
+    <h2 class="section-title">一个场景，一个专属体验</h2>
+    <p class="section-sub">数字水覆盖多种 B2C 触点，为每个场景定制交互内容，让客户停留更久、转化更高。</p>
+    <div class="scenarios-grid">
+      <div class="scenario-card reveal">
+        <div class="icon">🚗</div>
+        <h4>4S 店 · 看车体验</h4>
+        <p>客户等候时扫码，360° 看车、对比配置、预约试驾。把排队时间变成选车时间。</p>
+        <div class="scenario-tag">提升到店试驾率</div>
+      </div>
+      <div class="scenario-card reveal reveal-delay-2">
+        <div class="icon">💎</div>
+        <h4>珠宝店 · 新品鉴赏</h4>
+        <p>扫码浏览当季新品、明星同款、限时优惠，线上种草引导到店试戴成交。</p>
+        <div class="scenario-tag">延长品牌接触时长</div>
+      </div>
+      <div class="scenario-card reveal reveal-delay-3">
+        <div class="icon">🎤</div>
+        <h4>会议展会 · 数字化参会</h4>
+        <p>扫码签到、查看议程嘉宾、资料下载、互动留言。水就是你的电子参会证。</p>
+        <div class="scenario-tag">提升参会体验</div>
+      </div>
+      <div class="scenario-card reveal reveal-delay-4">
+        <div class="icon">🏨</div>
+        <h4>酒店 · 服务延伸</h4>
+        <p>客房扫码了解酒店服务、周边推荐、餐饮预订。一瓶水引导一次完整入住体验。</p>
+        <div class="scenario-tag">提升客单价</div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- How it works -->
-<section class="section" style="background:var(--light);padding:100px 24px;max-width:100%;">
-  <div style="max-width:1200px;margin:0 auto;">
-    <div class="section-label" style="text-align:center">HOW IT WORKS</div>
-    <h2 class="section-title" style="text-align:center">三步开启数字水</h2>
-    <p class="section-sub" style="text-align:center;margin:0 auto 16px;">最快 24 小时，从 0 到上线</p>
-    <div class="steps">
-      <div class="step">
+<section class="works-section section" id="works">
+  <div class="section-inner">
+    <div class="section-label" style="justify-content:center;">HOW IT WORKS</div>
+    <h2 class="section-title" style="text-align:center;">三步开启数字水</h2>
+    <p class="section-sub" style="text-align:center;margin:0 auto;">最快 24 小时，从 0 到上线</p>
+    <div class="steps-grid">
+      <div class="step reveal">
         <div class="step-num">1</div>
         <h4>定制页面</h4>
         <p>提供品牌素材，我们设计专属 H5 页面。扫码直达，秒级加载。</p>
       </div>
-      <div class="step">
+      <div class="step reveal reveal-delay-2">
         <div class="step-num">2</div>
         <h4>贴码生产</h4>
-        <p>二维码印上瓶身贴纸，与常规瓶装水生产完全兼容。可用现有供应链。</p>
+        <p>二维码印上瓶身贴纸，与瓶装水常规生产完全兼容。现有供应链零改动。</p>
       </div>
-      <div class="step">
+      <div class="step reveal reveal-delay-3">
         <div class="step-num">3</div>
         <h4>数据运营</h4>
         <p>后台实时查看扫码量、互动数据、用户反馈。持续优化体验。</p>
@@ -627,33 +895,35 @@ footer {
 
 <!-- Cases -->
 <section class="section" id="cases">
-  <div class="section-label">CASE STUDIES</div>
-  <h2 class="section-title">他们已经在用数字水</h2>
-  <p class="section-sub">从会议到体育赛事，数字水已在真实场景中验证效果。</p>
-  <div class="cases-grid">
-    <div class="case-card">
-      <div class="case-mock conference">🎯</div>
-      <div class="case-body">
-        <div class="case-client">海创周 · 国际人才创新创业周</div>
-        <h4>数字化大型会议参会体验</h4>
-        <p>3000+ 瓶数字水覆盖主会场及分论坛。扫码即可签到、查看议程、查阅嘉宾资料、提交留言反馈。</p>
-        <div class="case-metrics">
-          <div class="metric"><div class="num">72%</div><div class="label">扫码率</div></div>
-          <div class="metric"><div class="num">3000+</div><div class="label">覆盖人次</div></div>
-          <div class="metric"><div class="num">15min</div><div class="label">平均停留</div></div>
+  <div class="section-inner">
+    <div class="section-label">CASE STUDIES</div>
+    <h2 class="section-title">他们已经在用数字水</h2>
+    <p class="section-sub">真实场景验证效果，数据可衡量。</p>
+    <div class="cases-grid">
+      <div class="case-card reveal">
+        <div class="case-visual conf"><span class="vis-icon">🎯</span></div>
+        <div class="case-body">
+          <div class="case-client">海创周 · 国际人才双创周</div>
+          <h4>大型会议数字化参会体验</h4>
+          <p>3000+ 瓶数字水覆盖主会场及分论坛。扫码即可签到、查看议程、查阅嘉宾、提交反馈。</p>
+          <div class="case-metrics">
+            <div class="case-metric"><div class="num">72%</div><div class="label">扫码率</div></div>
+            <div class="case-metric"><div class="num">3000+</div><div class="label">覆盖人次</div></div>
+            <div class="case-metric"><div class="num">15min</div><div class="label">平均停留</div></div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="case-card">
-      <div class="case-mock car">⚽</div>
-      <div class="case-body">
-        <div class="case-client">英博球迷 · 体育赛事</div>
-        <h4>球迷互动 + 品牌延伸</h4>
-        <p>赛场数字水扫码进入球迷专属空间——留言助威、签到打卡、获取俱乐部最新动态。</p>
-        <div class="case-metrics">
-          <div class="metric"><div class="num">65%</div><div class="label">扫码率</div></div>
-          <div class="metric"><div class="num">2000+</div><div class="label">互动次数</div></div>
-          <div class="metric"><div class="num">4.8</div><div class="label">好评评分</div></div>
+      <div class="case-card reveal reveal-delay-2">
+        <div class="case-visual sport"><span class="vis-icon">⚽</span></div>
+        <div class="case-body">
+          <div class="case-client">英博球迷 · 体育赛事</div>
+          <h4>球迷互动 + 品牌情感延伸</h4>
+          <p>赛场扫码进入球迷专属空间——留言助威、签到打卡、获取俱乐部动态，球迷爱不释手。</p>
+          <div class="case-metrics">
+            <div class="case-metric"><div class="num">65%</div><div class="label">扫码率</div></div>
+            <div class="case-metric"><div class="num">2000+</div><div class="label">互动次数</div></div>
+            <div class="case-metric"><div class="num">4.8</div><div class="label">好评评分</div></div>
+          </div>
         </div>
       </div>
     </div>
@@ -663,7 +933,7 @@ footer {
 <!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="cta-inner">
-    <div class="section-label" style="color:rgba(255,255,255,0.5)">GET STARTED</div>
+    <div class="section-label" style="justify-content:center;">GET STARTED</div>
     <h2>让数字水成为<br>你的下一个品牌触点</h2>
     <p>适合 4S 店、珠宝连锁、会议会展、酒店集团。首批定制享优惠。从咨询到上线最快 24 小时。</p>
     <div class="cta-actions">
@@ -676,6 +946,33 @@ footer {
 <footer>
   © 2026 数字水 · 让每一瓶水都成为品牌入口
 </footer>
+
+<!-- Scroll reveal script -->
+<script>
+// Intersection Observer for scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Navbar hide on scroll down, show on scroll up
+let lastScroll = 0;
+const nav = document.querySelector('nav');
+window.addEventListener('scroll', () => {
+  const current = window.pageYOffset;
+  if (current > lastScroll && current > 100) {
+    nav.style.transform = 'translateY(-100%)';
+  } else {
+    nav.style.transform = 'translateY(0)';
+  }
+  lastScroll = current;
+});
+</script>
 
 </body>
 </html>
