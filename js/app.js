@@ -203,50 +203,69 @@
   checkFade();
   highlightNav();
 
-  /* ----- 8. 签到（localStorage）----- */
-  const CI_KEY = 'haichuangzhou_checkins';
-
-  function getCheckins() {
-    try { return JSON.parse(localStorage.getItem(CI_KEY)) || []; } catch { return []; }
-  }
-  function saveCheckins(arr) {
-    localStorage.setItem(CI_KEY, JSON.stringify(arr));
+  /* ----- 工具函数（签到和留言共用）----- */
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
   }
 
-  function renderCheckins() {
+  function formatTime(ts) {
+    const d = new Date(ts);
+    const pad = n => String(n).padStart(2, '0');
+    return `${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  /* ----- 8. 签到（Cloudflare Worker API）----- */
+  const API_BASE = 'https://haichuangzhou-api.peaceup.workers.dev';
+
+  async function apiCheckin(method, body) {
+    const res = await fetch(API_BASE + '/checkin', {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    return res.json();
+  }
+
+  let checkinList = [];   // 当前内存中的签到列表
+
+  async function renderCheckins() {
     const list = document.getElementById('checkinList');
     const total = document.getElementById('checkinTotal');
     if (!list) return;
 
-    const arr = getCheckins();
-    if (total) total.textContent = arr.length;
+    try {
+      const json = await apiCheckin('GET');
+      checkinList = (json.data || []);
+    } catch {
+      checkinList = [];
+    }
 
-    list.innerHTML = arr.length === 0
+    if (total) total.textContent = checkinList.length;
+
+    list.innerHTML = checkinList.length === 0
       ? '<div style="text-align:center;padding:24px;color:var(--text-light);font-size:13px;">暂无签到记录</div>'
-      : arr.map((c, i) => `
+      : checkinList.map((c, i) => `
         <div class="checkin-person">
           <span class="rank ${i < 3 ? 'top3' : ''}">${i + 1}</span>
-          <span class="ci-name">${c.name}</span>
+          <span class="ci-name">${escapeHtml(c.name)}</span>
           <span class="ci-time">${formatTime(c.time)}</span>
-          <button class="ci-del" data-ci="${i}" title="删除">✕</button>
         </div>
       `).join('');
   }
 
-  function showCheckinDone(name) {
+  function showCheckinDone(name, rank) {
     const form = document.getElementById('checkinForm');
     const done = document.getElementById('checkinDone');
     const stamp = document.getElementById('checkinStamp');
-    const rank = document.getElementById('checkinRank');
+    const rankEl = document.getElementById('checkinRank');
     if (form) form.style.display = 'none';
     if (done) done.style.display = 'block';
     if (stamp) stamp.textContent = name;
-
-    const arr = getCheckins();
-    const idx = arr.findIndex(c => c.name === name);
-    if (rank) rank.textContent = idx >= 0 ? idx + 1 : '--';
-
-    localStorage.setItem('haichuangzhou_my_checkin', name);
+    if (rankEl) rankEl.textContent = rank || '--';
+    // 记录已签到姓名
+    sessionStorage.setItem('haichuangzhou_my_checkin', name);
   }
 
   function showCheckinForm() {
@@ -254,28 +273,39 @@
     const done = document.getElementById('checkinDone');
     if (form) form.style.display = 'block';
     if (done) done.style.display = 'none';
-    localStorage.removeItem('haichuangzhou_my_checkin');
+    sessionStorage.removeItem('haichuangzhou_my_checkin');
   }
 
   // 签到按钮
   const ciBtn = document.getElementById('checkinBtn');
   const ciInput = document.getElementById('checkinName');
   if (ciBtn && ciInput) {
-    ciBtn.addEventListener('click', () => {
+    ciBtn.addEventListener('click', async () => {
       const name = ciInput.value.trim();
-      if (!name || name.length < 1) {
+      if (!name) {
         ciInput.focus();
         ciInput.style.borderColor = '#ef4444';
         setTimeout(() => ciInput.style.borderColor = '', 1000);
         return;
       }
 
-      const arr = getCheckins();
-      arr.unshift({ name: name.slice(0, 20), time: Date.now() });
-      saveCheckins(arr);
-      renderCheckins();
-      showCheckinDone(name);
-      ciInput.value = '';
+      ciBtn.disabled = true;
+      ciBtn.textContent = '提交中…';
+      try {
+        const json = await apiCheckin('POST', { name: name.slice(0, 20) });
+        if (json.ok) {
+          renderCheckins();
+          showCheckinDone(name, json.data.rank);
+          ciInput.value = '';
+        } else {
+          alert(json.error || '签到失败，请重试');
+        }
+      } catch (e) {
+        alert('网络错误：' + e.message);
+      } finally {
+        ciBtn.disabled = false;
+        ciBtn.innerHTML = '<i class="fas fa-check"></i> 签到';
+      }
     });
 
     ciInput.addEventListener('keydown', e => {
@@ -289,88 +319,56 @@
     resetBtn.addEventListener('click', showCheckinForm);
   }
 
-  // 删除单条签到
-  document.addEventListener('click', e => {
-    const del = e.target.closest('.ci-del');
-    if (!del) return;
-    const idx = parseInt(del.dataset.ci);
-    if (isNaN(idx)) return;
-    const arr = getCheckins();
-    arr.splice(idx, 1);
-    saveCheckins(arr);
-    renderCheckins();
-  });
-
-
-
-  // 恢复签到状态
-  (function restoreCheckin() {
-    const saved = localStorage.getItem('haichuangzhou_my_checkin');
+  // 初始化：加载签到列表 + 恢复我的签到状态
+  (async function initCheckin() {
+    await renderCheckins();
+    const saved = sessionStorage.getItem('haichuangzhou_my_checkin');
     if (saved) {
-      const arr = getCheckins();
-      const exists = arr.some(c => c.name === saved);
-      if (exists) { showCheckinDone(saved); }
-      else { localStorage.removeItem('haichuangzhou_my_checkin'); }
+      const idx = checkinList.findIndex(c => c.name === saved);
+      if (idx >= 0) { showCheckinDone(saved, idx + 1); }
+      else { sessionStorage.removeItem('haichuangzhou_my_checkin'); }
     }
   })();
 
-  renderCheckins();
-
-  /* ----- 9. 留言板（localStorage）----- */
-  const STORAGE_KEY = 'haichuangzhou_messages';
-  const MAX_MSGS = 100;
-
-  function getMessages() {
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch { return []; }
+  /* ----- 9. 留言板（Cloudflare Worker API）----- */
+  async function apiMessage(method, body) {
+    const res = await fetch(API_BASE + '/message', {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    return res.json();
   }
 
-  function saveMessages(msgs) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(msgs.slice(0, MAX_MSGS)));
-  }
-
-  function renderMessages() {
+  async function renderMessages() {
     const list = document.getElementById('gbList');
     const empty = document.getElementById('gbEmpty');
     if (!list) return;
 
-    const msgs = getMessages();
-
-    // 隐藏/显示空状态
-    if (empty) {
-      empty.style.display = msgs.length === 0 ? 'block' : 'none';
+    let msgs = [];
+    try {
+      const json = await apiMessage('GET');
+      msgs = json.data || [];
+    } catch {
+      msgs = [];
     }
 
-    // 移除 js 渲染的留言（保留空状态）
+    if (empty) empty.style.display = msgs.length === 0 ? 'block' : 'none';
     list.querySelectorAll('.gb-item').forEach(el => el.remove());
 
-    msgs.forEach((msg, idx) => {
+    msgs.forEach(msg => {
       const div = document.createElement('div');
       div.className = 'gb-item';
       div.innerHTML = `
         <div class="gb-item-head">
-          <span class="gb-item-avatar">${msg.label || '🙂'}</span>
+          <span class="gb-item-avatar">${escapeHtml(msg.label || '🙂')}</span>
           <span class="gb-item-name">${escapeHtml(msg.name || '匿名')}</span>
           <span class="gb-item-time">${formatTime(msg.time)}</span>
-          <button class="gb-item-del" data-idx="${idx}" title="删除">✕</button>
         </div>
         <div class="gb-item-text">${escapeHtml(msg.text)}</div>
       `;
       list.appendChild(div);
     });
-  }
-
-  function escapeHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
-
-  function formatTime(ts) {
-    const d = new Date(ts);
-    const pad = n => String(n).padStart(2, '0');
-    return `${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 
   // 提交留言
@@ -381,12 +379,11 @@
   const countSpan = document.getElementById('gbCount');
 
   if (submitBtn && msgInput) {
-    // 字数统计
     msgInput.addEventListener('input', () => {
       if (countSpan) countSpan.textContent = msgInput.value.length;
     });
 
-    submitBtn.addEventListener('click', () => {
+    submitBtn.addEventListener('click', async () => {
       const text = msgInput.value.trim();
       if (!text) {
         msgInput.focus();
@@ -395,18 +392,27 @@
         return;
       }
 
-      const msgs = getMessages();
-      msgs.unshift({
-        label: labelSelect ? labelSelect.value : '🙂',
-        name: nameInput ? nameInput.value.trim().slice(0, 20) : '',
-        text: text.slice(0, 500),
-        time: Date.now()
-      });
-      saveMessages(msgs);
-      renderMessages();
-
-      msgInput.value = '';
-      if (countSpan) countSpan.textContent = '0';
+      submitBtn.disabled = true;
+      submitBtn.textContent = '发布中…';
+      try {
+        const json = await apiMessage('POST', {
+          label: labelSelect ? labelSelect.value : '🙂',
+          name: nameInput ? nameInput.value.trim().slice(0, 20) : '',
+          text: text.slice(0, 500),
+        });
+        if (json.ok) {
+          renderMessages();
+          msgInput.value = '';
+          if (countSpan) countSpan.textContent = '0';
+        } else {
+          alert(json.error || '发布失败，请重试');
+        }
+      } catch (e) {
+        alert('网络错误：' + e.message);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> 发布';
+      }
     });
 
     // 回车发送
@@ -418,30 +424,15 @@
     });
   }
 
-  // 清空所有留言
+  // 清空按钮（本地操作，仅清空当前视图）
   const clearBtn = document.getElementById('gbClear');
   if (clearBtn) {
     clearBtn.addEventListener('click', () => {
-      if (getMessages().length === 0) return;
-      if (!confirm('确定清空所有留言？')) return;
-      saveMessages([]);
-      renderMessages();
+      msgInput && (msgInput.value = '');
+      if (countSpan) countSpan.textContent = '0';
     });
   }
 
-  // 删除单条留言（事件委托）
-  document.addEventListener('click', e => {
-    const delBtn = e.target.closest('.gb-item-del');
-    if (!delBtn) return;
-    const idx = parseInt(delBtn.dataset.idx);
-    if (isNaN(idx)) return;
-    const msgs = getMessages();
-    msgs.splice(idx, 1);
-    saveMessages(msgs);
-    renderMessages();
-  });
-
-  // 初始渲染
   renderMessages();
 
 })();
