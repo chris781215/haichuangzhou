@@ -647,6 +647,101 @@ footer {
 .reveal-delay-3 { transition-delay:.2s; }
 .reveal-delay-4 { transition-delay:.3s; }
 
+/* --- Specs Grid --- */
+.specs-section { background:var(--gray-50); }
+.specs-grid {
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:12px; margin-top:40px;
+}
+.spec-item {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:16px 20px;
+  background:#fff; border-radius:12px;
+  border:1px solid var(--gray-100);
+  transition: transform .3s, box-shadow .3s;
+}
+.spec-item:hover {
+  transform:translateY(-2px);
+  box-shadow:0 4px 16px rgba(0,0,0,0.05);
+}
+.spec-label {
+  font-size:13px; color:var(--gray-500); font-weight:500;
+}
+.spec-value {
+  font-size:14px; color:var(--navy); font-weight:600;
+  text-align:right;
+}
+
+/* --- FAQ Accordion --- */
+.faq-section { background:#fff; }
+.faq-list { margin-top:40px; max-width:800px; }
+.faq-item {
+  border-bottom:1px solid var(--gray-100);
+  transition: background .3s;
+}
+.faq-item:first-child { border-top:1px solid var(--gray-100); }
+.faq-q {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 0; cursor:pointer;
+  font-size:16px; font-weight:600; color:var(--navy);
+  transition: color .3s;
+  user-select:none; -webkit-user-select:none;
+}
+.faq-q:hover { color:var(--accent); }
+.faq-q .arrow {
+  font-size:14px; color:var(--gray-300);
+  transition: transform .4s ease;
+  flex-shrink:0; margin-left:12px;
+}
+.faq-item.open .faq-q .arrow { transform:rotate(180deg); color:var(--accent); }
+.faq-a {
+  max-height:0; overflow:hidden;
+  transition: max-height .4s ease, padding .4s ease;
+}
+.faq-item.open .faq-a {
+  max-height:300px;
+}
+.faq-a-inner {
+  padding:0 0 20px;
+  font-size:14px; line-height:1.8;
+  color:var(--gray-500);
+}
+.faq-a-inner strong { color:var(--navy); }
+
+/* --- Contact Card --- */
+.contact-card {
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:var(--radius-lg);
+  padding:32px; margin-top:36px;
+  text-align:left; max-width:440px; margin-left:auto; margin-right:auto;
+}
+.contact-card .row {
+  display:flex; align-items:center; gap:14px;
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  font-size:14px; color:rgba(255,255,255,0.6);
+}
+.contact-card .row:last-child { border-bottom:none; }
+.contact-card .row .icon-cell {
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px;
+  background:rgba(0,102,255,0.15);
+  flex-shrink:0;
+}
+.contact-card .row .val { color:rgba(255,255,255,0.9); }
+.contact-card .row .val strong { color:#fff; }
+.contact-card .row .val small { display:block; font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px; }
+.wx-qr-placeholder {
+  width:56px; height:56px;
+  background:rgba(255,255,255,0.08);
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  flex-shrink:0;
+}
+
 /* --- Responsive --- */
 @media (max-width: 900px) {
   .hero-inner { grid-template-columns:1fr; gap:48px; text-align:center; }
@@ -657,7 +752,10 @@ footer {
   .steps-grid { grid-template-columns:1fr; gap:20px; }
   .steps-grid .step { padding:32px 20px; }
   .nav-links a:not(.nav-cta) { display:none; }
+  .specs-grid { grid-template-columns:1fr; }
+  .faq-section { padding:0 8px; }
   .scenarios-grid { grid-template-columns:1fr; }
+  .specs-grid { grid-template-columns:1fr; }
   .cases-grid { grid-template-columns:1fr; }
   .phone-float { display:none; }
 }
@@ -695,6 +793,7 @@ footer {
       <a href="#scenarios">适用场景</a>
       <a href="#works">如何合作</a>
       <a href="#cases">案例</a>
+      <a href="#faq">常见问题</a>
       <a href="#contact" class="nav-cta">立即咨询 →</a>
     </div>
   </div>
@@ -867,6 +966,49 @@ footer {
   </div>
 </section>
 
+<!-- Product Specs -->
+<section class="section specs-section" id="specs">
+  <div class="section-inner">
+    <div class="section-label">PRODUCT SPECS</div>
+    <h2 class="section-title">产品规格</h2>
+    <p class="section-sub">基于市场主流瓶型定制，兼容现有供应链，零改造投入。</p>
+    <div class="specs-grid">
+      <div class="spec-item reveal">
+        <span class="spec-label">瓶装容量</span>
+        <span class="spec-value">350ml / 550ml</span>
+      </div>
+      <div class="spec-item reveal reveal-delay-2">
+        <span class="spec-label">瓶身材质</span>
+        <span class="spec-value">食品级 PET / 玻璃</span>
+      </div>
+      <div class="spec-item reveal reveal-delay-3">
+        <span class="spec-label">贴码工艺</span>
+        <span class="spec-value">不干胶 / 瓶身直印</span>
+      </div>
+      <div class="spec-item reveal reveal-delay-4">
+        <span class="spec-label">扫码技术</span>
+        <span class="spec-value">一物一码 · 动态活码</span>
+      </div>
+      <div class="spec-item reveal">
+        <span class="spec-label">起订数量</span>
+        <span class="spec-value">500 瓶起订</span>
+      </div>
+      <div class="spec-item reveal reveal-delay-2">
+        <span class="spec-label">生产周期</span>
+        <span class="spec-value">7-15 个工作日</span>
+      </div>
+      <div class="spec-item reveal reveal-delay-3">
+        <span class="spec-label">定制方式</span>
+        <span class="spec-value">瓶身贴纸 + H5 页面</span>
+      </div>
+      <div class="spec-item reveal reveal-delay-4">
+        <span class="spec-label">数据存储</span>
+        <span class="spec-value">云端加密 · 可导出</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- How it works -->
 <section class="works-section section" id="works">
   <div class="section-inner">
@@ -930,6 +1072,67 @@ footer {
   </div>
 </section>
 
+<!-- FAQ -->
+<section class="section faq-section" id="faq">
+  <div class="section-inner">
+    <div class="section-label">FAQ</div>
+    <h2 class="section-title">常见问题</h2>
+    <p class="section-sub">关于数字水，你关心的我们都想到了。</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          数字水和普通贴标水有什么区别？
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          贴标水只印个 Logo，客户喝完就扔，品牌接触面只有瓶身。数字水在瓶身增加二维码，扫码进入专属 H5 页面——可以看车、看新品、签到、留言、预约。
+          不是更贵的贴标水，是<strong>把瓶装水变成了品牌触点</strong>。
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          起订量多少？价格怎么算？
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          起订量 <strong>500 瓶</strong>。整体费用包含：瓶装水成本 + 贴码成本 + H5 定制开发。量大优惠，首批体验享特别价格。
+          具体根据瓶型、贴码工艺和页面复杂度报价。
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          需要我提供什么？
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          提供品牌 Logo、品牌色、主要展示内容（车型 / 产品图 / 活动信息），其余我们完成。
+          最快 <strong>24 小时</strong> 出 H5 设计稿，确认后 7-15 个工作日交付成品。
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          扫码数据归谁？安全吗？
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          所有扫码数据、互动记录<strong>完全归客户所有</strong>。支持定期导出 Excel/CSV。
+          数据存储于国内云服务商（Cloudflare D1），加密传输，不会对外泄露。
+        </div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          能否在现有瓶装水生产线贴码？
+          <span class="arrow">▾</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">
+          可以。不干胶贴码完全兼容现有生产线，不需要改造设备。我们合作多家饮用水厂，也可指定品牌瓶型。
+          <strong>现有供应链零改动。</strong>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="cta-section" id="contact">
   <div class="cta-inner">
@@ -939,6 +1142,21 @@ footer {
     <div class="cta-actions">
       <a href="#" class="btn-primary">立即咨询</a>
       <a href="#" class="btn-gold">预约演示 →</a>
+    </div>
+    <!-- Contact Card -->
+    <div class="contact-card reveal">
+      <div class="row">
+        <div class="icon-cell">📞</div>
+        <div class="val"><strong>400-000-0000</strong><small>工作日 9:00-18:00</small></div>
+      </div>
+      <div class="row">
+        <div class="icon-cell">💬</div>
+        <div class="val"><strong>扫描微信咨询</strong><small>添加请备注「数字水」</small></div>
+      </div>
+      <div class="row">
+        <div class="icon-cell">📧</div>
+        <div class="val"><strong>hello@digitalwater.cn</strong><small>24 小时内回复</small></div>
+      </div>
     </div>
   </div>
 </section>
@@ -959,6 +1177,12 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ accordion toggle
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
 
 // Navbar hide on scroll down, show on scroll up
 let lastScroll = 0;
